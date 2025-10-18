@@ -1,49 +1,62 @@
 <?php
+// ensure session
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-// Trivial demo signup: set session and redirect
-$first = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
-$last = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
-$email = isset($_POST['email2']) ? trim($_POST['email2']) : '';
-$password = isset($_POST['password2']) ? trim($_POST['password2']) : '';
-$skill = isset($_POST['skill']) ? trim($_POST['skill']) : '';
+// include DB connection - correct path from pages/ to includes/
+require_once __DIR__ . '/../includes/dbh.inc.php';
 
-// Basic validations
-if ($first === '' || $last === '') {
-  header('Location: auth.php?tab=signup');
-  exit;
-}
-// Email with letters before/after @
-if ($email === '' || !preg_match('/^[A-Za-z][^@\s]*@[A-Za-z][^\s@]*$/', $email)) {
-  header('Location: auth.php?tab=signup');
-  exit;
-}
-// Password >=8 chars and must contain letters and numbers
-if ($password === '') {
-  header('Location: auth.php?tab=signup&error=pw');
-  exit;
-}
-if (strlen($password) < 8) {
-  header('Location: auth.php?tab=signup&error=pw');
-  exit;
-}
-if (!preg_match('/[A-Za-z]/', $password) || !preg_match('/\d/', $password)) {
-  header('Location: auth.php?tab=signup&error=pw');
-  exit;
-}
-// Skill required
-if ($skill === '') {
-  header('Location: auth.php?tab=signup');
+if (!isset($conn) || $conn === null) {
+  echo "<p style='color:red;'>DB connection not found. Confirm includes/dbh.inc.php defines \$conn (mysqli) and path is correct.</p>";
   exit;
 }
 
-$_SESSION['user'] = [
-  'email' => $email,
-  'first' => $first,
-  'last' => $last,
-  // username removed
-  'skill' => $skill,
-];
-header('Location: profile.php');
-exit;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  // accept either form naming conventions used in project
+  $first = isset($_POST['FName']) ? trim($_POST['FName']) : (isset($_POST['first_name']) ? trim($_POST['first_name']) : '');
+  $last  = isset($_POST['LName']) ? trim($_POST['LName']) : (isset($_POST['last_name']) ? trim($_POST['last_name']) : '');
+  $email = isset($_POST['Email']) ? trim($_POST['Email']) : (isset($_POST['email2']) ? trim($_POST['email2']) : '');
+  $password = isset($_POST['Password']) ? $_POST['Password'] : (isset($_POST['password2']) ? $_POST['password2'] : '');
+  $skill = isset($_POST['Hobby']) ? trim($_POST['Hobby']) : (isset($_POST['skill']) ? trim($_POST['skill']) : '');
+
+  // basic required checks
+  if ($first === '' || $last === '' || $email === '' || $password === '') {
+    echo "<p style='color:red;'>Missing required fields.</p>";
+    exit;
+  }
+
+  $hashed = password_hash($password, PASSWORD_DEFAULT);
+
+  // use the `users` table and the exact column names shown in your DB (they contain spaces)
+  $sql = "INSERT INTO `users` (`First Name`, `Last Name`, `Email`, `Password`, `Skill`) VALUES (?, ?, ?, ?, ?)";
+  $stmt = $conn->prepare($sql);
+  if ($stmt === false) {
+    echo "<p style='color:red;'>Prepare failed: " . htmlspecialchars($conn->error) . "</p>";
+    $conn->close();
+    exit;
+  }
+
+  $stmt->bind_param("sssss", $first, $last, $email, $hashed, $skill);
+
+  if ($stmt->execute()) {
+    // set session from DB values
+    $_SESSION['user'] = [
+      'id'    => $conn->insert_id,
+      'email' => $email,
+      'first' => $first,
+      'last'  => $last,
+      'skill' => $skill,
+    ];
+    $stmt->close();
+    $conn->close();
+    header('Location: auth.php');
+    exit;
+  } else {
+    echo "<p style='color:red;'>Execute failed: " . htmlspecialchars($stmt->error) . "</p>";
+  }
+
+  $stmt->close();
+  $conn->close();
+}
+?>
 
