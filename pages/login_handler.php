@@ -5,8 +5,6 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 
-// Basic validation
-// Email must contain letters before and after @
 if ($email === '' || !preg_match('/^[A-Za-z][^@\s]*@[A-Za-z][^\s@]*$/', $email)) {
   header('Location: auth.php?tab=login');
   exit;
