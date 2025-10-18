@@ -1,1 +1,23 @@
-
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rankify</title>
+  <link rel="icon" href="../../public/favicon.ico">
+  <!-- Tailwind via CDN to keep utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom theme utilities to match original tokens -->
+  <link rel="stylesheet" href="../assets/css/custom.css">
+</head>
+<body class="min-h-screen bg-background text-foreground">
+  <?php include __DIR__.'/nav.php'; ?>
+  <script>
+    // Initialize lucide icons after DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide && lucide.createIcons) lucide.createIcons();
+    });
+  </script>
