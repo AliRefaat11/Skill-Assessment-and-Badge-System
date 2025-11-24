@@ -13,11 +13,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/AliRefaat11/Skill-Assessment-and-Badge-System/issues"
   },
   "homepage": "https://github.com/AliRefaat11/Skill-Assessment-and-Badge-System#readme",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mongoose": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
