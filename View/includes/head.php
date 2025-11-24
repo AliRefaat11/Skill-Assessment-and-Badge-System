@@ -11,7 +11,7 @@
   <!-- Lucide icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Custom theme utilities to match original tokens -->
-  <link rel="stylesheet" href="/assets/css/custom.css">
+  <link rel="stylesheet" href="../assets/css/custom.css">
 </head>
 <body class="min-h-screen bg-background text-foreground">
   <?php include __DIR__.'/nav.php'; ?>
@@ -21,4 +21,3 @@
       if (window.lucide && lucide.createIcons) lucide.createIcons();
     });
   </script>
-
