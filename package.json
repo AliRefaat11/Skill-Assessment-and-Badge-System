@@ -1,0 +1,23 @@
+{
+  "name": "skill-assessment-and-badge-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AliRefaat11/Skill-Assessment-and-Badge-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AliRefaat11/Skill-Assessment-and-Badge-System/issues"
+  },
+  "homepage": "https://github.com/AliRefaat11/Skill-Assessment-and-Badge-System#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
