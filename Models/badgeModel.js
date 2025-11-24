@@ -21,10 +21,11 @@ const BadgeSchema = new mongoose.Schema({
   },
   Icon: {
     type: String, 
-    default: ''       // URL or file path
+    default: ''   
   }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model('Badge', BadgeSchema);
+const Badge = mongoose.model('Badge', BadgeSchema);
+module.exports = Badge;
