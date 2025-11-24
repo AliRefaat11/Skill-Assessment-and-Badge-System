@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $skill = isset($_POST['Hobby']) ? trim($_POST['Hobby']) : (isset($_POST['skill']) ? trim($_POST['skill']) : '');
 
   // basic required checks
-  if ($first === '' || $last === '' || $emaibl === '' || $password === '') {
+  if ($first === '' || $last === '' || $email === '' || $password === '') {
     echo "<p style='color:red;'>Missing required fields.</p>";
     exit;
   }
