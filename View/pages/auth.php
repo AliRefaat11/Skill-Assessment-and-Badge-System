@@ -1,4 +1,4 @@
-<?php include __DIR__.'/includes/head.php'; ?>
+<?php include __DIR__.'/../includes/head.php'; ?>
 
 <div class="min-h-screen flex items-center justify-center px-4 py-12">
   <div class="w-full max-w-md">
@@ -91,5 +91,4 @@
   })();
 </script>
 
-<?php include __DIR__.'/includes/footer.php'; ?>
-
+<?php include __DIR__.'/../includes/footer.php'; ?>
