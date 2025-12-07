@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
             unique:[true,"Email already exists"],
             required:[true,"Email is required"]
         },
-        role:{
+        Role:{
             type:String,
             enum:["Learner","Admin"],
             default:"Learner"
@@ -44,8 +44,10 @@ const userSchema = new mongoose.Schema(
             trim:true,
             required: [true, "gender number is required"],
             enum: ["Male","Female"]
-        }
-    }
+        },
+        dateOfBirth: Date,
+    },
+    { timestamps: true }
 );
 
 const User = mongoose.model("User",userSchema);
