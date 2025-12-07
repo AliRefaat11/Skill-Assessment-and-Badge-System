@@ -1,0 +1,204 @@
+<%- include('../includes/head') %>
+
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md">
+    <!-- toast placeholder -->
+    <div id="toast" class="toast hidden">
+      <span class="badge">Password</span>
+      <span
+        >Must be at least 8 characters and include letters and numbers.</span
+      >
+    </div>
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 mb-2">
+        <i data-lucide="zap" class="w-8 h-8 text-primary"></i>
+        <span
+          class="text-2xl font-extrabold brand-gradient tracking-wide select-none"
+          >Rankify</span
+        >
+      </div>
+    </div>
+    <div
+      class="bg-card/60 backdrop-blur border-gradient rounded-2xl p-8 glossy"
+    >
+      <h2 class="text-3xl font-bold text-center text-foreground mb-2">
+        Welcome Back
+      </h2>
+      <p class="text-center text-muted-foreground mb-8">
+        Sign in to continue your learning journey
+      </p>
+
+      <div class="flex gap-2 mb-6 bg-white/10 p-1 rounded-lg">
+        <button
+          id="tab-login"
+          data-tab="login"
+          data-group="auth"
+          class="flex-1 py-2 px-4 rounded-md font-medium"
+        >
+          Login
+        </button>
+        <button
+          id="tab-signup"
+          data-tab="signup"
+          data-group="auth"
+          class="flex-1 py-2 px-4 rounded-md font-medium text-muted-foreground"
+        >
+          Sign Up
+        </button>
+      </div>
+
+      <form
+        method="post"
+        action="/login"
+        class="space-y-4"
+        data-tab-content="login"
+        data-group="auth"
+      >
+        <div class="space-y-2">
+          <label class="text-foreground text-sm" for="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
+            required
+            pattern="^[A-Za-z][^@\s]*@[A-Za-z][^\s@]*$"
+            title="Email must have letters before and after @"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-foreground text-sm" for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-primary hover:opacity-90 text-white rounded-md px-4 py-2 shadow-glow"
+        >
+          Login
+        </button>
+      </form>
+
+      <form
+        method="post"
+        action="/signup"
+        class="space-y-4 hidden"
+        data-tab-content="signup"
+        data-group="auth"
+      >
+        <div class="space-y-2">
+          <label class="text-foreground text-sm" for="first_name"
+            >First Name</label
+          >
+          <input
+            id="first_name"
+            name="first_name"
+            type="text"
+            placeholder="John"
+            class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
+            required
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-foreground text-sm" for="last_name"
+            >Last Name</label
+          >
+          <input
+            id="last_name"
+            name="last_name"
+            type="text"
+            placeholder="Doe"
+            class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
+            required
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-foreground text-sm" for="email2">Email</label>
+          <input
+            id="email2"
+            name="email2"
+            type="email"
+            placeholder="you@example.com"
+            class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
+            required
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-foreground text-sm" for="password2"
+            >Password</label
+          >
+          <input
+            id="password2"
+            name="password2"
+            type="password"
+            placeholder="••••••••"
+            class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
+            required
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-foreground text-sm" for="skill"
+            >Primary Skill</label
+          >
+          <select
+            id="skill"
+            name="skill"
+            class="w-full border rounded-md px-3 py-2 input"
+            data-custom-select
+            required
+          >
+            <option value="">Select a skill</option>
+            <option>Algorithms & Data Structures</option>
+            <option>Web Development (HTML/CSS/JS)</option>
+            <option>Backend (PHP/Node)</option>
+            <option>Databases (SQL/NoSQL)</option>
+            <option>DevOps & Cloud</option>
+            <option>Cybersecurity</option>
+            <option>Machine Learning</option>
+            <option>Mobile Development</option>
+            <option>UI/UX Design</option>
+          </select>
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-primary hover:opacity-90 text-white rounded-md px-4 py-2 shadow-glow"
+        >
+          Sign Up
+        </button>
+      </form>
+
+      <p class="text-center text-sm text-muted-foreground mt-6">
+        By continuing, you agree to our Terms of Service and Privacy Policy
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const want = params.get("tab");
+    const err = params.get("error");
+    if (want === "signup") {
+      document.getElementById("tab-signup")?.click();
+    } else if (want === "login") {
+      document.getElementById("tab-login")?.click();
+    }
+    if (err === "pw") {
+      const t = document.getElementById("toast");
+      if (t) {
+        t.classList.remove("hidden");
+        setTimeout(() => t.classList.add("hidden"), 4000);
+      }
+    }
+  })();
+</script>
+
+<%- include('../includes/footer') %>
