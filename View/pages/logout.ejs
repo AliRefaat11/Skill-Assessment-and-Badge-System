@@ -1,0 +1,10 @@
+<%- include('../includes/head') %>
+<div class="min-h-screen flex items-center justify-center">
+  <p class="text-lg text-muted-foreground">Logging out...</p>
+</div>
+<script>
+  // Logout should be handled server-side at GET /logout (destroy session),
+  // then redirect to the homepage. This view redirects client-side as a fallback.
+  window.location.href = "/";
+</script>
+<%- include('../includes/footer') %>
