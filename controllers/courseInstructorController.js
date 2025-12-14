@@ -1,4 +1,4 @@
-const CourseInstructor = require("../models/courseInstructor");
+const CourseInstructor = require("../Models/courseInstructorModel");
 
 /**
  * Get all course-instructor relationships
