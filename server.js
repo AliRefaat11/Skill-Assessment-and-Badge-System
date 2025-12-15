@@ -10,6 +10,9 @@ const userRoute = require("./Routes/userRoute");
 const authRoute = require("./Routes/authRoute");
 const learnerRoute = require("./Routes/learnerRoute");
 
+const questionRoute = require("./routes/questionRoute");
+const assessmentRoute = require("./routes/assesmentRoute");
+
 dbconnection();
 
 const app = express();
@@ -27,6 +30,9 @@ app.all("/", (req, res, next) => {
 });
 
 app.use(globalError);
+
+app.use("/api/v1/questions", questionRoute);
+app.use("/api/v1/assessments", assessmentRoute);
 
 const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
