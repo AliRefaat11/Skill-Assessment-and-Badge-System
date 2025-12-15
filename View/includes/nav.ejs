@@ -1,0 +1,23 @@
+<nav
+  class="w-full sticky top-0 z-40 bg-card/70 backdrop-blur border-b border-border"
+>
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="/" class="inline-flex items-center gap-3">
+      <span class="nav-logo">
+        <i data-lucide="zap" class="w-5 h-5"></i>
+      </span>
+      <span class="font-semibold">Rankify</span>
+    </a>
+    <div class="flex items-center gap-4 text-sm">
+      <a class="hover:underline" href="/">Home</a>
+      <% if (user) { %>
+      <a class="hover:underline" href="/profile">Profile</a>
+      <a class="hover:underline" href="/admin">Admin</a>
+      <a class="hover:underline" href="/logout">Logout</a>
+      <% } else { %>
+      <a class="hover:underline" href="/auth?tab=login">Login</a>
+      <a class="hover:underline" href="/auth?tab=signup">Sign Up</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

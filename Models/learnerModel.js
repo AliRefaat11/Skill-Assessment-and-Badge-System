@@ -8,7 +8,8 @@ const LearnerSchema = new mongoose.Schema({
   },
   Level: {
     type: String,
-    enum: ['Beginner', 'Intermediate', 'Advanced'], 
+    enum: ['Beginner', 'Intermediate', 'Advanced'],
+    default: 'Beginner', 
     required: false
   },
   Enrollment_Date: {
@@ -16,6 +17,11 @@ const LearnerSchema = new mongoose.Schema({
     default: Date.now
   },
   Education: {
+    type: String,
+    enum: ['High School', 'Bachelor', 'Master', 'Doctorate', 'Other'],
+    required: false
+  },
+  Specialization: {
     type: String,
     required: false
   },
