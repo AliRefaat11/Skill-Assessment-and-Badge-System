@@ -5,15 +5,14 @@ const {
     deleteUser, 
     getUsersByRole, 
     getUsersById} = require("../Controllers/userController");
-const authService = require("../Services/authService");
+const { auth, allowedTo } = require('../Services/authService');
 
 const router = express.Router();
 
-authService.allowedTo("Admin");
-router.post("/", createUser);
+router.post("/",allowedTo("Admin"), auth, createUser);
 router.put("/:id", editUser);
-router.delete("/:id", deleteUser);
+router.delete("/:id", allowedTo("Admin"), auth, deleteUser);
 router.get("/:id", getUsersById);
-router.get("/role/:role", getUsersByRole);
+router.get("/role/:role", allowedTo("Admin"), auth, getUsersByRole);
 
 module.exports = router;

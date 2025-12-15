@@ -6,8 +6,9 @@ const ApiError = require("./Utils/apiError");
 const dbconnection = require("./Config/DB");
 const globalError = require("./middleware/errorMiddleware");
 
-const userRoutes = require("./Routes/userRoute");
+const userRoute = require("./Routes/userRoute");
 const authRoute = require("./Routes/authRoute");
+const learnerRoute = require("./Routes/learnerRoute");
 
 dbconnection();
 
@@ -17,10 +18,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes FIRST
-app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/learner", learnerRoute);
 
-// Handle invalid routes LAST (use '/' instead of '*')
 app.all("/", (req, res, next) => {
   next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
 });

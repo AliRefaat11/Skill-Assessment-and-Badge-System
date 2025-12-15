@@ -3,44 +3,51 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const ApiError = require("../Utils/apiError");
 const User = require("../Models/userModel");
+const Learner = require("../Models/learnerModel");
 const { createToken } = require("../Utils/createToken");
 
-// @desc    signup user
-// @route   GET /api/v1/auth/signup
-// @access  public
 exports.signup = asyncHandler(async (req, res, next) => {
-  const { fName, lName, email, password, phone, gender, dateOfBirth } =
+  const { FName, LName, Email, Password, PhoneNumber, Gender, dateOfBirth } =
     req.body;
 
+  const hashedPassword = await bcrypt.hash(Password, 10);
+
   const user = await User.create({
-    FName: fName,
-    LName: lName,
-    email,
-    password,
-    phone,
-    gender,
+    FName,
+    LName,
+    Email,
+    Password: hashedPassword,
+    PhoneNumber,
+    Gender,
     dateOfBirth,
-    role: "Learner",
+    Role: "Learner",
   });
+
+  const learner = await Learner.create({
+    UserID: user._id
+  });
+
   const token = createToken(user._id);
   res.status(201).json({
     status: "success",
+    message: "User created. Complete your learner profile.",
     token,
-    role: user.role,
+    UserID: user._id,
+    learnerId: learner._id
   });
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email: email });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
+  const { Email, Password } = req.body;
+  const user = await User.findOne({ Email });
+  if (!user || !(await bcrypt.compare(Password, user.Password))) {
     return next(new ApiError("Invalid email or password", 401));
   }
   const token = createToken(user._id);
   res.status(201).json({
     status: "success",
     token,
-    role: user.role,
+    role: user.Role,
   });
 });
 
@@ -60,21 +67,23 @@ exports.auth = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ApiError("User not found", 401));
   }
-  const passwordChangedTimeStamp = parseInt(
-    user.passwordChangedAt.getTime() / 1000,
-    10
-  );
-  if (passwordChangedTimeStamp > decoded.iat) {
-    return next(new ApiError("user changed password, login again", 401));
+  if (user.passwordChangedAt) {
+    const passwordChangedTimeStamp = parseInt(
+      user.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    if (passwordChangedTimeStamp > decoded.iat) {
+      return next(new ApiError("User changed password, please login again", 401));
+    }
   }
   req.user = user;
   next();
 });
 
 // @desc    Authorization (User Permissions)
-exports.allowedTo = (...roles) =>
+exports.allowedTo = (...Roles) =>
   asyncHandler(async (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!Roles.includes(req.user.Role)) {
       return next(
         new ApiError("You are not allowed to access this route", 403)
       );

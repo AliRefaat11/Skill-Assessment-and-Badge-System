@@ -4,7 +4,7 @@ const validatorMiddleware = require("../../middleware/validatorMiddleware");
 const User = require("../../Models/userModel");
 
 exports.signupValidator = [
-  check("fName")
+  check("FName")
     .notEmpty()
     .withMessage("First name must be specified")
     .isLength({ min: 3 })
@@ -12,11 +12,11 @@ exports.signupValidator = [
     .isLength({ max: 15 })
     .withMessage("First name is too long")
     .custom((value, { req }) => {
-      req.body.slug = slugify(value + " " + req.body.lName, { lower: true });
+      req.body.slug = slugify(value + " " + req.body.LName, { lower: true });
       return true;
     }),
 
-  check("lName")
+  check("LName")
     .notEmpty()
     .withMessage("Last name must be specified")
     .isLength({ min: 3 })
@@ -24,13 +24,13 @@ exports.signupValidator = [
     .isLength({ max: 15 })
     .withMessage("Last name is too long"),
 
-  check("email")
+  check("Email")
     .notEmpty()
     .withMessage("Email is required")
     .isEmail()
     .withMessage("Email is invalid")
     .custom((value) =>
-      User.findOne({ email: value }).then((user) => {
+      User.findOne({ Email: value }).then((user) => {
         if (user) {
           return Promise.reject("Email already in use");
         }
@@ -42,7 +42,7 @@ exports.signupValidator = [
     .isDate()
     .withMessage("date of birth is invalid"),
 
-  check("password")
+  check("Password")
     .notEmpty()
     .withMessage("Password is required")
     .isLength({ min: 6 })
@@ -56,25 +56,25 @@ exports.signupValidator = [
   check("passwordComfirm")
     .notEmpty()
     .withMessage("Confirm password is required"),
-  check("phone")
+  check("PhoneNumber")
     .isMobilePhone(["ar-EG", "ar-SA"])
     .withMessage("Invalid phone number, only accept EG and SA phone numbers"),
-  check("gender")
+  check("Gender")
     .notEmpty()
     .withMessage("gender must be specified")
-    .isIn(["male", "female"])
+    .isIn(["Male", "Female"])
     .withMessage("invalid gender"),
   check("profileImg").optional(),
   validatorMiddleware,
 ];
 
 exports.loginValidator = [
-  check("email")
+  check("Email")
     .notEmpty()
     .withMessage("email is required")
     .isEmail()
     .withMessage("email is invalid"),
-  check("password")
+  check("Password")
     .notEmpty()
     .withMessage("password is required")
     .isLength({ min: 6 })
