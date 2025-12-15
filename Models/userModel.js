@@ -18,14 +18,14 @@ const userSchema = new mongoose.Schema(
         },
         Email: {
             type: String,
-            trim:true,
-            lowercase:true,
-            unique:[true,"Email already exists"],
-            required:[true,"Email is required"]
+            trim: true,
+            lowercase: true,
+            unique: [true, "Email already exists"],
+            required: [true, "Email is required"]
         },
-        role:{
+        Role:{
             type:String,
-            enum:["Learner","Admin"],
+            enum:["Learner", "Instructor","Admin"],
             default:"Learner"
         },
         Password:{
@@ -44,9 +44,11 @@ const userSchema = new mongoose.Schema(
             trim:true,
             required: [true, "gender number is required"],
             enum: ["Male","Female"]
-        }
-    }
+        },
+        dateOfBirth: Date,
+    },
+    { timestamps: true }
 );
 
-const User = mongoose.model("User",userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;
