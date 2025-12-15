@@ -16,6 +16,10 @@ const assessmentRoute = require("./routes/assesmentRoute");
 const badgeRoute = require('./Routes/badgeRoute');
 const skillRoute = require('./Routes/skillRoute');
 
+// Import routes
+const badgeRoutes = require("./Routes/badgeRoutes");
+const certificateRoutes = require("./Routes/certificateRoutes");
+
 dbconnection();
 
 const app = express();
@@ -39,6 +43,10 @@ app.use("/api/v1/assessments", assessmentRoute);
 
 app.use('/api/v1/badges', badgeRoute);
 app.use('/api/v1/skills', skillRoute);
+
+// Use routes
+app.use("/api/badges", badgeRoutes);
+app.use("/api/certificates", certificateRoutes);
 
 const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
