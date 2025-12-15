@@ -15,7 +15,6 @@ const CourseInstructorSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Create a compound index to ensure unique course-instructor pairs
 CourseInstructorSchema.index({ courseID: 1, instructorID: 1 }, { unique: true });
 
 const CourseInstructor = mongoose.model("CourseInstructor", CourseInstructorSchema);
