@@ -1,9 +1,6 @@
 const Badge = require("../Models/badgeModel");
 
-// @desc    Get all badges
-// @route   GET /api/badges
-// @access  Public
-exports.getAllBadges = async (req, res) => {
+exports.getBadges = async (req, res) => {
   try {
     const badges = await Badge.find().populate("CourseID", "Name Description");
     res.status(200).json({
@@ -133,7 +130,7 @@ exports.updateBadge = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Badge updated successfully",
-      data: updatedBadge
+      data: badge
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

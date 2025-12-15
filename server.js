@@ -9,14 +9,10 @@ const globalError = require("./middleware/errorMiddleware");
 const userRoute = require("./Routes/userRoute");
 const authRoute = require("./Routes/authRoute");
 const learnerRoute = require("./Routes/learnerRoute");
-
 const questionRoute = require("./routes/questionRoute");
 const assessmentRoute = require("./routes/assesmentRoute");
-
 const badgeRoute = require('./Routes/badgeRoute');
 const skillRoute = require('./Routes/skillRoute');
-
-// Import routes
 const badgeRoutes = require("./Routes/badgeRoutes");
 const certificateRoutes = require("./Routes/certificateRoutes");
 
@@ -31,22 +27,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
+app.use("/api/v1/questions", questionRoute);
+app.use("/api/v1/assessments", assessmentRoute);
+app.use('/api/v1/badges', badgeRoute);
+app.use('/api/v1/skills', skillRoute);
+app.use("/api/v1/badges", badgeRoutes);
+app.use("/api/v1/certificates", certificateRoutes);
 
 app.all("/", (req, res, next) => {
   next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
 });
 
 app.use(globalError);
-
-app.use("/api/v1/questions", questionRoute);
-app.use("/api/v1/assessments", assessmentRoute);
-
-app.use('/api/v1/badges', badgeRoute);
-app.use('/api/v1/skills', skillRoute);
-
-// Use routes
-app.use("/api/badges", badgeRoutes);
-app.use("/api/certificates", certificateRoutes);
 
 const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
