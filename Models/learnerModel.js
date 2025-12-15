@@ -28,4 +28,5 @@ const LearnerSchema = new mongoose.Schema({
   timestamps: true       // adds createdAt & updatedAt
 });
 
-module.exports = mongoose.model('Learner', LearnerSchema);
+const Learner = mongoose.model('Learner', LearnerSchema);
+module.exports = Learner;
