@@ -1,6 +1,6 @@
-const Assessment = require("../models/Assessment");
-const Question = require("../models/Question");
-const Course = require("../models/Course");
+const Question = require("../Models/questionsModel");
+const Assessment = require("../Models/assesmentModel");
+const Course = require("../Models/courseModel");
 
 // POST /api/admin/assessments
 exports.createAssessment = async (req, res, next) => {

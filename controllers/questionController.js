@@ -1,5 +1,5 @@
-const Question = require("../models/Question");
-const Assessment = require("../models/Assessment");
+const Question = require("../Models/questionsModel");
+const Assessment = require("../Models/assesmentModel");
 
 
 // POST /api/admin/questions
