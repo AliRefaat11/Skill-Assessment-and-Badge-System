@@ -133,28 +133,19 @@ exports.updateBadge = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Badge updated successfully",
-      data: badge,
+      data: updatedBadge
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// @desc    Delete a badge
-// @route   DELETE /api/badges/:id
-// @access  Private (Admin only)
+// DELETE badge
 exports.deleteBadge = async (req, res) => {
   try {
     const badge = await Badge.findByIdAndDelete(req.params.id);
-
     if (!badge) {
-      return res.status(404).json({
-        success: false,
-        message: "Badge not found",
-      });
+      return res.status(404).json({ success: false, message: "Badge not found" });
     }
 
     res.status(200).json({

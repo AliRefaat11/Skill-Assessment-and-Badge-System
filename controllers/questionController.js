@@ -1,0 +1,126 @@
+const Question = require("../Models/questionsModel");
+const Assessment = require("../Models/assesmentModel");
+
+
+// POST /api/admin/questions
+exports.createQuestion = async (req, res, next) => {
+  try {
+    const { assessmentId, type, text, points, options, correctAnswer } = req.body;
+
+    const assessment = await Assessment.findById(assessmentId);
+    if (!assessment) {
+      return res.status(404).json({ success: false, message: "Assessment not found" });
+    }
+
+    const question = await Question.create({
+      assessmentId,
+      type,
+      text,
+      points,
+      options,
+      correctAnswer
+    });
+
+    // increment totalQuestions
+    assessment.totalQuestions += 1;
+    await assessment.save();
+
+    res.status(201).json({ success: true, data: question });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// GET /api/admin/questions
+exports.getQuestions = async (req, res, next) => {
+  try {
+    const questions = await Question.find()
+      .populate("assessmentId", "courseId")
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, data: questions });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// GET /api/admin/questions/:id
+exports.getQuestionById = async (req, res, next) => {
+  try {
+    const question = await Question.findById(req.params.id);
+
+    if (!question) {
+      return res.status(404).json({ success: false, message: "Question not found" });
+    }
+
+    res.json({ success: true, data: question });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// PUT /api/admin/questions/:id
+exports.updateQuestion = async (req, res, next) => {
+  try {
+    const { type, text, points, options, correctAnswer } = req.body;
+
+    const question = await Question.findByIdAndUpdate(
+      req.params.id,
+      { type, text, points, options, correctAnswer },
+      { new: true, runValidators: true }
+    );
+
+    if (!question) {
+      return res.status(404).json({ success: false, message: "Question not found" });
+    }
+
+    res.json({ success: true, data: question });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// DELETE /api/admin/questions/:id
+exports.deleteQuestion = async (req, res, next) => {
+  try {
+    const question = await Question.findById(req.params.id);
+    if (!question) {
+      return res.status(404).json({ success: false, message: "Question not found" });
+    }
+
+    const assessmentId = question.assessmentId;
+
+    await question.deleteOne();
+
+    // decrement totalQuestions
+    if (assessmentId) {
+      const assessment = await Assessment.findById(assessmentId);
+      if (assessment && assessment.totalQuestions > 0) {
+        assessment.totalQuestions -= 1;
+        await assessment.save();
+      }
+    }
+
+    res.json({ success: true, message: "Question deleted" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// GET /api/admin/assessments/:assessmentId/questions
+exports.getQuestionsByAssessment = async (req, res, next) => {
+  try {
+    const { assessmentId } = req.params;
+
+    const questions = await Question.find({ assessmentId });
+
+    res.json({ success: true, data: questions });
+  } catch (err) {
+    next(err);
+  }
+};
