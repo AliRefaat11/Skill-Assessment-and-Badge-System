@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getAllBadges,
+  getBadges,
   getBadgeById,
   getBadgesByCourse,
   createBadge,
@@ -10,7 +10,7 @@ const {
 } = require("../Controllers/badgeController");
 
 // Public routes
-router.get("/", getAllBadges);
+router.get("/", getBadges);
 router.get("/:id", getBadgeById);
 router.get("/course/:courseId", getBadgesByCourse);
 

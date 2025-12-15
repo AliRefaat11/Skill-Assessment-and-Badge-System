@@ -1,6 +1,5 @@
 const Course = require("../Models/courseModel");
 
-
 const getAllCourses = async (req, res) => {
   try {
     const { skillID, difficultyLevel } = req.query;
