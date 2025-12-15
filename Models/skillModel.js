@@ -1,0 +1,23 @@
+const mongoose = require('mongoose');
+
+const skillSchema = new mongoose.Schema(
+  {
+    skillName: {
+      type: String,
+      required: [true, "Skill name is required"]
+    },
+    category: {
+      type: String,
+      enum: ["Beginner", "Intermediate", "Expert"],
+      required: [true, "Category level is required"]
+    },
+    learnerId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Learner",
+      required: [true, "Learner ID is required"]
+    }
+  }
+);
+
+const Skill = mongoose.model("Skill", skillSchema);
+module.exports = Skill;

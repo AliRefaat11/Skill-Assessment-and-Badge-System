@@ -1,0 +1,80 @@
+<%- include('../includes/head') %>
+
+<section
+  class="relative overflow-hidden py-14 sm:py-16 px-4 sm:px-6 lg:px-8 hero-bg"
+>
+  <div class="absolute inset-0 opacity-0"></div>
+  <div class="relative max-w-4xl mx-auto text-center">
+    <div
+      class="inline-flex items-center gap-2 bg-card/50 backdrop-blur-sm px-4 py-2 rounded-full border border-primary/20 mb-6 animate-scale-in"
+    >
+      <i data-lucide="zap" class="w-4 h-4 text-warning"></i>
+      <span class="text-sm font-medium text-foreground">Rankify</span>
+    </div>
+    <h1
+      class="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight"
+    >
+      Master Any Subject
+      <span class="block text-accent-gradient mt-2">One Quiz at a Time</span>
+    </h1>
+    <p
+      class="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+    >
+      Challenge yourself with interactive quizzes, track your progress with
+      beautiful stats, and unlock achievements as you learn.
+    </p>
+    <% if (!user) { %>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="/auth?tab=signup"
+        class="inline-flex items-center justify-center px-6 py-3 rounded-md btn-primary shadow-glow transition"
+      >
+        <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i>
+        Sign Up
+      </a>
+      <a
+        href="/auth?tab=login"
+        class="inline-flex items-center justify-center px-6 py-3 rounded-md border border-border hover:bg-white/5 transition"
+      >
+        <i data-lucide="log-in" class="w-5 h-5 mr-2"></i>
+        Login
+      </a>
+    </div>
+    <% } %>
+
+    <div class="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-16">
+      <div
+        class="p-4 rounded-lg bg-card/30 backdrop-blur-sm border border-border"
+      >
+        <div class="text-3xl font-bold text-primary font-heading">250+</div>
+        <div class="text-sm text-muted-foreground mt-1">Quizzes</div>
+      </div>
+      <div
+        class="p-4 rounded-lg bg-card/30 backdrop-blur-sm border border-border"
+      >
+        <div class="text-3xl font-bold text-secondary font-heading">15K+</div>
+        <div class="text-sm text-muted-foreground mt-1">Learners</div>
+      </div>
+      <div
+        class="p-4 rounded-lg bg-card/30 backdrop-blur-sm border border-border"
+      >
+        <div class="text-3xl font-bold text-success font-heading">98%</div>
+        <div class="text-sm text-muted-foreground mt-1">Success Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container mx-auto px-4 py-16">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-8">
+      <div>
+        <h2 class="text-3xl font-bold text-foreground mb-6">Explore Courses</h2>
+        <%- include('./partials/course-grid') %>
+      </div>
+    </div>
+    <div class="space-y-6"><%- include('./partials/leaderboard') %></div>
+  </div>
+</section>
+
+<%- include('../includes/footer') %>
