@@ -1,4 +1,6 @@
 const CourseInstructor = require("../Models/courseInstructorModel");
+const Course = require("../Models/courseModel");
+const User = require("../Models/userModel");
 
 /**
  * Get all course-instructor relationships
@@ -19,7 +21,7 @@ const getAllCourseInstructors = async (req, res) => {
 
     const courseInstructors = await CourseInstructor.find(filter)
       .populate("courseID", "name")
-      .populate("instructorID", "name email")
+      .populate("instructorID", "FName LName Email")
       .sort({ createdAt: -1 });
     
     res.status(200).json({
@@ -45,7 +47,7 @@ const getCourseInstructorById = async (req, res) => {
     
     const courseInstructor = await CourseInstructor.findById(id)
       .populate("courseID", "name")
-      .populate("instructorID", "name email");
+      .populate("instructorID", "FName LName Email");
     
     if (!courseInstructor) {
       return res.status(404).json({
@@ -89,6 +91,33 @@ const createCourseInstructor = async (req, res) => {
       });
     }
 
+    // Validate referenced course and instructor
+    const [courseExists, instructorExists] = await Promise.all([
+      Course.findById(courseID),
+      User.findById(instructorID)
+    ]);
+
+    if (!courseExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Provided courseID does not exist"
+      });
+    }
+
+    if (!instructorExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Provided instructorID does not exist"
+      });
+    }
+
+    if (instructorExists.Role !== "Instructor") {
+      return res.status(400).json({
+        success: false,
+        message: "Provided instructorID must belong to a user with role Instructor"
+      });
+    }
+
     // Check if relationship already exists
     const existing = await CourseInstructor.findOne({ courseID, instructorID });
     if (existing) {
@@ -106,7 +135,7 @@ const createCourseInstructor = async (req, res) => {
     const savedCourseInstructor = await courseInstructor.save();
     const populatedCourseInstructor = await CourseInstructor.findById(savedCourseInstructor._id)
       .populate("courseID", "name")
-      .populate("instructorID", "name email");
+      .populate("instructorID", "FName LName Email");
 
     res.status(201).json({
       success: true,
@@ -161,6 +190,23 @@ const updateCourseInstructor = async (req, res) => {
 
       const checkCourseID = courseID || current.courseID;
       const checkInstructorID = instructorID || current.instructorID;
+
+      // Ensure new instructor (if provided) has Instructor role
+      if (instructorID) {
+        const instructorExists = await User.findById(instructorID);
+        if (!instructorExists) {
+          return res.status(400).json({
+            success: false,
+            message: "Provided instructorID does not exist"
+          });
+        }
+        if (instructorExists.Role !== "Instructor") {
+          return res.status(400).json({
+            success: false,
+            message: "Provided instructorID must belong to a user with role Instructor"
+          });
+        }
+      }
       
       const existing = await CourseInstructor.findOne({
         courseID: checkCourseID,
@@ -182,7 +228,7 @@ const updateCourseInstructor = async (req, res) => {
       { new: true, runValidators: true }
     )
       .populate("courseID", "name")
-      .populate("instructorID", "name email");
+      .populate("instructorID", "FName LName Email");
 
     if (!courseInstructor) {
       return res.status(404).json({
@@ -227,7 +273,9 @@ const deleteCourseInstructor = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const courseInstructor = await CourseInstructor.findByIdAndDelete(id);
+    const courseInstructor = await CourseInstructor.findByIdAndDelete(id)
+      .populate("courseID", "name")
+      .populate("instructorID", "FName LName Email");
 
     if (!courseInstructor) {
       return res.status(404).json({

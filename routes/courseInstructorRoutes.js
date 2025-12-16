@@ -8,7 +8,7 @@ const {
   deleteCourseInstructor,
   getInstructorsByCourse,
   getCoursesByInstructor
-} = require("../controllers/courseInstructorController");
+} = require("../Controllers/courseInstructorController");
 
 // Get all course-instructor relationships (with optional query params: ?courseID=xxx&instructorID=xxx)
 router.get("/", getAllCourseInstructors);

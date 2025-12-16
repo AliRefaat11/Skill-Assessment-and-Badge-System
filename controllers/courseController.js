@@ -1,4 +1,5 @@
 const Course = require("../Models/courseModel");
+const Skill = require("../Models/skillModel");
 
 
 const getAllCourses = async (req, res) => {
@@ -74,10 +75,10 @@ const createCourse = async (req, res) => {
     const { skillID, name, difficultyLevel, duration, price } = req.body;
 
     // Validation
-    if (!skillID || !name || !difficultyLevel || duration === undefined || price === undefined) {
+    if (!name || !difficultyLevel || duration === undefined || price === undefined) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all required fields: skillID, name, difficultyLevel, duration, price"
+        message: "Please provide all required fields: name, difficultyLevel, duration, price"
       });
     }
 
@@ -96,6 +97,17 @@ const createCourse = async (req, res) => {
         success: false,
         message: "Duration must be greater than 0 and price must be non-negative"
       });
+    }
+
+    // Ensure referenced skill exists (when provided)
+    if (skillID) {
+      const skillExists = await Skill.findById(skillID);
+      if (!skillExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Provided skillID does not exist"
+        });
+      }
     }
 
     const course = new Course({
@@ -173,7 +185,16 @@ const updateCourse = async (req, res) => {
     }
 
     const updateData = {};
-    if (skillID) updateData.skillID = skillID;
+    if (skillID) {
+      const skillExists = await Skill.findById(skillID);
+      if (!skillExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Provided skillID does not exist"
+        });
+      }
+      updateData.skillID = skillID;
+    }
     if (name) updateData.name = name;
     if (difficultyLevel) updateData.difficultyLevel = difficultyLevel;
     if (duration !== undefined) updateData.duration = duration;
