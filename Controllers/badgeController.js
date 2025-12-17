@@ -137,7 +137,6 @@ exports.updateBadge = async (req, res) => {
   }
 };
 
-// DELETE badge
 exports.deleteBadge = async (req, res) => {
   try {
     const badge = await Badge.findByIdAndDelete(req.params.id);

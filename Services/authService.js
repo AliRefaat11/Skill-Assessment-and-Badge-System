@@ -28,6 +28,8 @@ exports.signup = asyncHandler(async (req, res, next) => {
   });
 
   const token = createToken(user._id);
+
+  res.redirect('/api/v1/auth/?step=learner');
   res.status(201).json({
     status: "success",
     message: "User created. Complete your learner profile.",
@@ -35,6 +37,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     UserID: user._id,
     learnerId: learner._id
   });
+  res.redirect('/api/v1/auth/?tab=login');
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
@@ -89,4 +92,8 @@ exports.allowedTo = (...Roles) =>
       );
     }
     next();
-  });
+});
+
+exports.renderAuth = (req, res) => {
+    res.render('pages/auth', { user: null });
+};

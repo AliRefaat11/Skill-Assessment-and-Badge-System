@@ -1,6 +1,6 @@
 const Course = require("../Models/courseModel");
 
-const getAllCourses = async (req, res) => {
+exports.getAllCourses = async (req, res) => {
   try {
     const { skillID, difficultyLevel } = req.query;
     const filter = {};
@@ -32,7 +32,7 @@ const getAllCourses = async (req, res) => {
 /**
  * Get a single course by ID
  */
-const getCourseById = async (req, res) => {
+exports.getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
     
@@ -68,7 +68,7 @@ const getCourseById = async (req, res) => {
 /**
  * Create a new course
  */
-const createCourse = async (req, res) => {
+exports.createCourse = async (req, res) => {
   try {
     const { skillID, name, difficultyLevel, duration, price } = req.body;
 
@@ -137,10 +137,7 @@ const createCourse = async (req, res) => {
   }
 };
 
-/**
- * Update an existing course
- */
-const updateCourse = async (req, res) => {
+exports.updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
     const { skillID, name, difficultyLevel, duration, price } = req.body;
@@ -223,7 +220,7 @@ const updateCourse = async (req, res) => {
 /**
  * Delete a course
  */
-const deleteCourse = async (req, res) => {
+exports.deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -260,7 +257,7 @@ const deleteCourse = async (req, res) => {
 /**
  * Get courses by skillID
  */
-const getCoursesBySkill = async (req, res) => {
+exports.getCoursesBySkill = async (req, res) => {
   try {
     const { skillID } = req.params;
 
@@ -288,13 +285,3 @@ const getCoursesBySkill = async (req, res) => {
     });
   }
 };
-
-module.exports = {
-  getAllCourses,
-  getCourseById,
-  createCourse,
-  updateCourse,
-  deleteCourse,
-  getCoursesBySkill
-};
-
