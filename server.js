@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const path = require('path');
 
 dotenv.config({ path: "config.env" });
 const ApiError = require("./Utils/apiError");
@@ -15,6 +16,7 @@ const badgeRoute = require('./Routes/badgeRoute');
 const skillRoute = require('./Routes/skillRoute');
 const badgeRoutes = require("./Routes/badgeRoutes");
 const certificateRoutes = require("./Routes/certificateRoutes");
+const authservice = require('./Services/authService');
 
 dbconnection();
 
@@ -22,6 +24,9 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'View'));
 
 // Routes FIRST
 app.use("/api/v1/user", userRoute);
@@ -33,10 +38,12 @@ app.use('/api/v1/badges', badgeRoute);
 app.use('/api/v1/skills', skillRoute);
 app.use("/api/v1/badges", badgeRoutes);
 app.use("/api/v1/certificates", certificateRoutes);
+app.get('/api/v1/auth', authservice.renderAuth);
 
 app.all("/", (req, res, next) => {
   next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
 });
+
 
 app.use(globalError);
 

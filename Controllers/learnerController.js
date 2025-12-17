@@ -21,9 +21,8 @@ exports.getLearnerById = asyncHandler(async (req, res, next) => {
 });
 
 exports.createLearner = asyncHandler(async (req, res, next) => {
-  const UserID = req.user._id;
 
-  const { education, specialization, fieldOfInterest, Level } = req.body;
+  const {UserID, education, specialization, fieldOfInterest, Level } = req.body;
   const learner = await Learner.findOne({ UserID });
   
   if (!learner) {
@@ -43,4 +42,14 @@ exports.createLearner = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.updateLearner = asyncHandler(async (req, res, next) => {});
+exports.updateLearner = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return next(new ApiError("Invalid learner ID", 400));
+  }
+  const learner = await Learner.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+  if (!learner) {
+    return next(new ApiError("Learner not found", 404));
+  }
+  res.status(200).json({ status: "success", data: learner });
+});
