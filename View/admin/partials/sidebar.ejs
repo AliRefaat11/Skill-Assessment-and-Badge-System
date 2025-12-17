@@ -1,0 +1,21 @@
+<header class="topbar">
+  <div class="brand">
+    <div class="brandIcon">🏅</div>
+    <div>
+      <div class="brandName">Rankify</div>
+      <div class="brandSub">Admin Dashboard</div>
+    </div>
+  </div>
+
+  <a class="btnLogout" href="#">Logout</a>
+</header>
+
+<div class="shell">
+  <nav class="tabs">
+    <a class="tab <%= activeTab === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">Dashboard</a>
+    <a class="tab <%= activeTab === 'courses' ? 'active' : '' %>" href="/admin/courses">Courses</a>
+    <a class="tab <%= activeTab === 'instructors' ? 'active' : '' %>" href="/admin/instructors">Instructors</a>
+    <a class="tab <%= activeTab === 'users' ? 'active' : '' %>" href="/admin/users">Users</a>
+  </nav>
+
+  <main class="content">
