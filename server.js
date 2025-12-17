@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 dotenv.config({ path: "config.env" });
 const ApiError = require("./Utils/apiError");
@@ -10,9 +11,8 @@ const globalError = require("./middleware/errorMiddleware");
 const userRoute = require("./Routes/userRoute");
 const authRoute = require("./Routes/authRoute");
 const learnerRoute = require("./Routes/learnerRoute");
-const questionRoute = require("./routes/questionRoute");
-const assessmentRoute = require("./routes/assesmentRoute");
-const badgeRoute = require('./Routes/badgeRoute');
+const questionRoute = require("./Routes/questionRoute");
+const assessmentRoute = require("./Routes/assesmentRoute");
 const skillRoute = require('./Routes/skillRoute');
 const badgeRoutes = require("./Routes/badgeRoutes");
 const certificateRoutes = require("./Routes/certificateRoutes");
@@ -22,6 +22,7 @@ dbconnection();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,9 +35,8 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
 app.use("/api/v1/questions", questionRoute);
 app.use("/api/v1/assessments", assessmentRoute);
-app.use('/api/v1/badges', badgeRoute);
-app.use('/api/v1/skills', skillRoute);
 app.use("/api/v1/badges", badgeRoutes);
+app.use('/api/v1/skills', skillRoute);
 app.use("/api/v1/certificates", certificateRoutes);
 app.get('/api/v1/auth', authservice.renderAuth);
 
@@ -47,7 +47,7 @@ app.all("/", (req, res, next) => {
 
 app.use(globalError);
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });

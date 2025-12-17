@@ -37,6 +37,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     UserID: user._id,
     learnerId: learner._id
   });
+  res.redirect('/api/v1/auth/?tab=login');
 });
 
 exports.login = asyncHandler(async (req, res, next) => {

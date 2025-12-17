@@ -204,74 +204,6 @@
   </div>
 </div>
 
-<form
-  method="post"
-  action="/api/v1/learner"
-  class="space-y-4 hidden"
-  data-tab-content="learner"
-  data-group="auth"
->
-  <h3 class="text-xl font-bold text-center mb-4">
-    Complete Your Learner Profile
-  </h3>
-
-  <div class="space-y-2">
-    <label class="text-sm">Education</label>
-    <input
-      name="education"
-      type="text"
-      placeholder="Bachelor's, High School, etc."
-      class="w-full input"
-      required
-    />
-  </div>
-
-  <div class="space-y-2">
-    <label class="text-sm">Specialization</label>
-    <input
-      name="specialization"
-      type="text"
-      placeholder="Computer Science"
-      class="w-full input"
-      required
-    />
-  </div>
-
-  <div class="space-y-2">
-    <label class="text-sm">Field of Interest</label>
-    <input
-      name="fieldOfInterest"
-      type="text"
-      placeholder="AI, Web Development, Networking"
-      class="w-full input"
-      required
-    />
-  </div>
-
-  <div class="space-y-2">
-    <label class="text-sm">Level</label>
-    <select
-      name="Level"
-      class="w-full input"
-      required
-    >
-      <option value="">Select Level</option>
-      <option value="Beginner">Beginner</option>
-      <option value="Intermediate">Intermediate</option>
-      <option value="Advanced">Advanced</option>
-    </select>
-  </div>
-
-  <button
-    type="submit"
-    class="w-full bg-primary text-white py-2 rounded-md"
-    action="/api/v1/learner"
-  >
-    Complete Profile
-  </button>
-</form>
-
-
 <script>
   (function () {
     const tabs = document.querySelectorAll('[data-tab][data-group="auth"]');
@@ -286,7 +218,7 @@
         t.classList.toggle('text-muted-foreground', !active);
       });
 
-      // Toggle forms (includes learner)
+      // Toggle forms
       contents.forEach(c => {
         c.classList.toggle('hidden', c.dataset.tabContent !== name);
       });
@@ -300,11 +232,7 @@
     // URL-driven behavior
     const params = new URLSearchParams(location.search);
 
-    if (params.get("step") === "learner") {
-      openTab("learner");
-    } else {
-      openTab(params.get("tab") || "login");
-    }
+    openTab(params.get("tab") === "signup" ? "signup" : "login");
 
     // Toast error
     if (params.get("error") === "pw") {

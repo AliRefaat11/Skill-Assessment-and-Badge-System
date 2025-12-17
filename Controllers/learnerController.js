@@ -21,8 +21,8 @@ exports.getLearnerById = asyncHandler(async (req, res, next) => {
 });
 
 exports.createLearner = asyncHandler(async (req, res, next) => {
-
-  const {UserID, education, specialization, fieldOfInterest, Level } = req.body;
+  const { UserID } = req.user_id;
+  const {education, specialization, fieldOfInterest, Level } = req.body;
   const learner = await Learner.findOne({ UserID });
   
   if (!learner) {
