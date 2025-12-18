@@ -6,7 +6,12 @@ const CourseSchema = new mongoose.Schema({
         ref: "Skill",
         required: true
     },
-    name: {
+    instructorID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Instructor",
+        required: true
+    },
+    Name: {
         type: String,
         required: true,
         trim: true,
@@ -21,9 +26,9 @@ const CourseSchema = new mongoose.Schema({
         type: Number, 
         required: true
     },
-    price: {
-        type: Number,
-        required: true
+    IsPublished: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true
