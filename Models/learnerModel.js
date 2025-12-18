@@ -22,16 +22,12 @@ const LearnerSchema = new mongoose.Schema({
     enum: ['High School', 'Bachelor', 'Master', 'Doctorate', 'Other'],
     required: false
   },
-  Specialization: {
-    type: String,
-    required: false
-  },
   Field_Of_Interest: {
     type: String,
     required: false
   }
 }, {
-  timestamps: true       // adds createdAt & updatedAt
+  timestamps: true
 });
 
 const Learner = mongoose.model('Learner', LearnerSchema);

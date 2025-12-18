@@ -6,47 +6,22 @@ const assessmentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course", required: true 
     },
-    learnerId:{
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "Learner", required: true 
-    },
-    durationMins:{ 
+    duration:{ 
       type: Number, 
-      required: true, min: 1 
+      required: true,
+      min: 1 
     },
     status:{ 
       type: String, enum: ["not-started", "in-progress", "submitted"], 
       default: "not-started" 
     },
-    totalQuestions:{ 
-      type: Number, 
-      default: 0 
-    },
-    score:{ 
-      type: Number, 
-      default: 0, 
-      min: 0 
-    },
-    grade:{ 
-      type: String, 
-      trim: true 
-    },
-    passed:{ 
-      type: Boolean, 
-      default: false 
-    },
-    submittedAt:{ 
-      type: Date 
+    TotalMarks: {
+      type: Number,
+      required: true
     }
   },
   { timestamps: true }
 );
-
-assessmentSchema.methods.evaluatePassFail = function() {
-  const percent = this.totalQuestions ? (this.score / this.totalQuestions) * 100 : 0;
-  this.passed = percent >= 70;
-  return this.passed;
-};
 
 const Assessment = mongoose.model("Assessment", assessmentSchema);
 module.exports = Assessment;

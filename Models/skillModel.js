@@ -11,11 +11,6 @@ const skillSchema = new mongoose.Schema(
       enum: ["Beginner", "Intermediate", "Expert"],
       required: [true, "Category level is required"]
     },
-    learnerId: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Learner",
-      required: [true, "Learner ID is required"]
-    }
   }
 );
 
