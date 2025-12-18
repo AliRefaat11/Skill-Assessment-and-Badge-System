@@ -54,6 +54,15 @@ exports.updateLearner = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", data: learner });
 });
 
+exports.deleteLearner = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return next(new ApiError("Invalid learner ID", 400));
+  }
+  await Learner.findByIdAndDelete(id);
+  res.status(200).json({ status: "success", message: "Learner deleted successfully" });
+});
+
 exports.renderprofile = (req, res) => {
-    res.render('pages/learnerprofile');
+    res.render('pages/learnerprofile', { user: req.user });
 };

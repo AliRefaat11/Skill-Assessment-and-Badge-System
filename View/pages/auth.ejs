@@ -241,6 +241,79 @@
         setTimeout(() => toast.classList.add("hidden"), 4000);
       }
     }
+
+    // Handle login form submission
+    const loginForm = document.querySelector('[data-tab-content="login"]');
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(loginForm);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await res.json();
+        
+        if (result.status === 'success') {
+          // Store token in localStorage
+          localStorage.setItem('token', result.token);
+          localStorage.setItem('role', result.role);
+          
+          // Redirect based on role
+          if (result.role === 'Learner') {
+            window.location.href = '/api/v1/learner/profile';
+          } else if (result.role === 'Instructor') {
+            window.location.href = '/api/v1/instructor/profile';
+          } else if (result.role === 'Admin') {
+            window.location.href = '/api/v1/admin';
+          } else {
+            window.location.href = '/';
+          }
+        } else {
+          alert(result.message || 'Login failed');
+        }
+      } catch (err) {
+        alert('Login failed. Please try again.');
+      }
+    });
+
+    // Handle signup form submission
+    const signupForm = document.querySelector('[data-tab-content="signup"]');
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(signupForm);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Check password confirmation
+      if (data.Password !== data.passwordComfirm) {
+        alert('Passwords do not match');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/v1/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await res.json();
+        
+        if (result.status === 'success') {
+          localStorage.setItem('token', result.token);
+          localStorage.setItem('role', 'Learner');
+          window.location.href = '/api/v1/learner/profile';
+        } else {
+          alert(result.message || 'Signup failed');
+        }
+      } catch (err) {
+        alert('Signup failed. Please try again.');
+      }
+    });
   })();
 </script>
 
