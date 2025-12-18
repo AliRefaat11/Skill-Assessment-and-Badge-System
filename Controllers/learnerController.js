@@ -53,3 +53,7 @@ exports.updateLearner = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json({ status: "success", data: learner });
 });
+
+exports.renderprofile = (req, res) => {
+    res.render('pages/learnerprofile');
+};

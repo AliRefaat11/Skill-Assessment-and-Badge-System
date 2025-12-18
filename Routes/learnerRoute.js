@@ -1,8 +1,9 @@
 const express = require("express");
 const {
-    getAllLearners, 
+    getAllLearners,
     getLearnerById,
-    createLearner,} = require("../Controllers/learnerController");
+    createLearner,
+    renderprofile } = require("../Controllers/learnerController");    
 const { auth, allowedTo } = require('../Services/authService');
 
 const router = express.Router();
@@ -10,5 +11,6 @@ const router = express.Router();
 router.get("/", allowedTo("Admin"), auth, getAllLearners);
 router.get("/:id", auth, getLearnerById);
 router.post("/", auth, createLearner);
+router.get("/profile", renderprofile);
 
 module.exports = router;

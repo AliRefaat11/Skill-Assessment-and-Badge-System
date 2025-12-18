@@ -29,7 +29,6 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
   const token = createToken(user._id);
 
-  res.redirect('/api/v1/auth/?step=learner');
   res.status(201).json({
     status: "success",
     message: "User created. Complete your learner profile.",
@@ -37,7 +36,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     UserID: user._id,
     learnerId: learner._id
   });
-  res.redirect('/api/v1/auth/?tab=login');
+  res.redirect('/api/v1/auth/login');
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
@@ -52,6 +51,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     token,
     role: user.Role,
   });
+  res.redirect('/api/v1/learner/profile');
 });
 
 exports.auth = asyncHandler(async (req, res, next) => {

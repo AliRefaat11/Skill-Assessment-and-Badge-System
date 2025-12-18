@@ -15,7 +15,6 @@ const questionRoute = require("./Routes/questionRoute");
 const assessmentRoute = require("./Routes/assesmentRoute");
 const skillRoute = require('./Routes/skillRoute');
 const badgeRoutes = require("./Routes/badgeRoutes");
-const certificateRoutes = require("./Routes/certificateRoutes");
 const authservice = require('./Services/authService');
 
 dbconnection();
@@ -29,7 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'View'));
 
-// Routes FIRST
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
@@ -37,7 +35,6 @@ app.use("/api/v1/questions", questionRoute);
 app.use("/api/v1/assessments", assessmentRoute);
 app.use("/api/v1/badges", badgeRoutes);
 app.use('/api/v1/skills', skillRoute);
-app.use("/api/v1/certificates", certificateRoutes);
 app.get('/api/v1/auth', authservice.renderAuth);
 
 app.all("/", (req, res, next) => {

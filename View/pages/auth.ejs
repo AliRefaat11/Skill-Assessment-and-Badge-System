@@ -234,7 +234,6 @@
 
     openTab(params.get("tab") === "signup" ? "signup" : "login");
 
-    // Toast error
     if (params.get("error") === "pw") {
       const toast = document.getElementById("toast");
       if (toast) {
