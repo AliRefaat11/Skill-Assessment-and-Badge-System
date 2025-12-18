@@ -29,7 +29,13 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
   const token = createToken(user._id);
 
-  res.redirect('/api/v1/auth/?step=learner');
+  // Set token as HTTP-only cookie for browser sessions
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 90 * 24 * 60 * 60 * 1000 // 90 days
+  });
+
   res.status(201).json({
     status: "success",
     message: "User created. Complete your learner profile.",
@@ -37,7 +43,6 @@ exports.signup = asyncHandler(async (req, res, next) => {
     UserID: user._id,
     learnerId: learner._id
   });
-  res.redirect('/api/v1/auth/?tab=login');
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
@@ -47,7 +52,15 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ApiError("Invalid email or password", 401));
   }
   const token = createToken(user._id);
-  res.status(201).json({
+  
+  // Set token as HTTP-only cookie for browser sessions
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 90 * 24 * 60 * 60 * 1000 // 90 days
+  });
+  
+  res.status(200).json({
     status: "success",
     token,
     role: user.Role,
@@ -56,11 +69,16 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 exports.auth = asyncHandler(async (req, res, next) => {
   let token;
+  // Check for token in Authorization header
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+  }
+  // Check for token in cookies (for browser sessions)
+  else if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
   }
   if (!token) {
     return next(new ApiError("Please login to get access", 401));
