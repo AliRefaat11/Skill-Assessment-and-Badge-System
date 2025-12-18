@@ -49,7 +49,7 @@
 
       <form
         method="post"
-        action="/login"
+        action="/api/v1/auth/login"
         class="space-y-4"
         data-tab-content="login"
         data-group="auth"
@@ -58,7 +58,7 @@
           <label class="text-foreground text-sm" for="email">Email</label>
           <input
             id="email"
-            name="email"
+            name="Email"
             type="email"
             placeholder="you@example.com"
             class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
@@ -71,7 +71,7 @@
           <label class="text-foreground text-sm" for="password">Password</label>
           <input
             id="password"
-            name="password"
+            name="Password"
             type="password"
             placeholder="••••••••"
             class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
@@ -88,7 +88,7 @@
 
       <form
         method="post"
-        action="/signup"
+        action="/api/v1/auth/signup"
         class="space-y-4 hidden"
         data-tab-content="signup"
         data-group="auth"
@@ -206,21 +206,114 @@
 
 <script>
   (function () {
-    const params = new URLSearchParams(location.search);
-    const want = params.get("tab");
-    const err = params.get("error");
-    if (want === "signup") {
-      document.getElementById("tab-signup")?.click();
-    } else if (want === "login") {
-      document.getElementById("tab-login")?.click();
+    const tabs = document.querySelectorAll('[data-tab][data-group="auth"]');
+    const contents = document.querySelectorAll('[data-tab-content][data-group="auth"]');
+
+    function openTab(name) {
+      // Update tab styles (only for login/signup)
+      tabs.forEach(t => {
+        const active = t.dataset.tab === name;
+        t.classList.toggle('bg-primary', active);
+        t.classList.toggle('text-white', active);
+        t.classList.toggle('text-muted-foreground', !active);
+      });
+
+      // Toggle forms
+      contents.forEach(c => {
+        c.classList.toggle('hidden', c.dataset.tabContent !== name);
+      });
     }
-    if (err === "pw") {
-      const t = document.getElementById("toast");
-      if (t) {
-        t.classList.remove("hidden");
-        setTimeout(() => t.classList.add("hidden"), 4000);
+
+    // Tab clicks
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => openTab(tab.dataset.tab));
+    });
+
+    // URL-driven behavior
+    const params = new URLSearchParams(location.search);
+
+    openTab(params.get("tab") === "signup" ? "signup" : "login");
+
+    if (params.get("error") === "pw") {
+      const toast = document.getElementById("toast");
+      if (toast) {
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 4000);
       }
     }
+
+    // Handle login form submission
+    const loginForm = document.querySelector('[data-tab-content="login"]');
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(loginForm);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await res.json();
+        
+        if (result.status === 'success') {
+          // Store token in localStorage
+          localStorage.setItem('token', result.token);
+          localStorage.setItem('role', result.role);
+          
+          // Redirect based on role
+          if (result.role === 'Learner') {
+            window.location.href = '/api/v1/learner/profile';
+          } else if (result.role === 'Instructor') {
+            window.location.href = '/api/v1/instructor/profile';
+          } else if (result.role === 'Admin') {
+            window.location.href = '/api/v1/admin';
+          } else {
+            window.location.href = '/';
+          }
+        } else {
+          alert(result.message || 'Login failed');
+        }
+      } catch (err) {
+        alert('Login failed. Please try again.');
+      }
+    });
+
+    // Handle signup form submission
+    const signupForm = document.querySelector('[data-tab-content="signup"]');
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(signupForm);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Check password confirmation
+      if (data.Password !== data.passwordComfirm) {
+        alert('Passwords do not match');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/v1/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await res.json();
+        
+        if (result.status === 'success') {
+          localStorage.setItem('token', result.token);
+          localStorage.setItem('role', 'Learner');
+          window.location.href = '/api/v1/learner/profile';
+        } else {
+          alert(result.message || 'Signup failed');
+        }
+      } catch (err) {
+        alert('Signup failed. Please try again.');
+      }
+    });
   })();
 </script>
 
