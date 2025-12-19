@@ -29,6 +29,9 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'View'));
 
+app.use('/assets', express.static(path.join(__dirname, 'View/assets')));
+
+
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
