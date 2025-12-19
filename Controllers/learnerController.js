@@ -20,28 +20,6 @@ exports.getLearnerById = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", data: learner });
 });
 
-exports.createLearner = asyncHandler(async (req, res, next) => {
-  const { UserID } = req.user_id;
-  const {education, specialization, fieldOfInterest, Level } = req.body;
-  const learner = await Learner.findOne({ UserID });
-  
-  if (!learner) {
-    return next(new ApiError("Learner profile not found. Please sign up first.", 404));
-  }
-
-  learner.Education = education;
-  learner.Specialization = specialization;
-  learner.Field_Of_Interest = fieldOfInterest;
-  learner.Level = Level;  
-  await learner.save();
-
-  res.status(200).json({ 
-    status: "success", 
-    message: "Learner profile completed successfully",
-    data: learner 
-  });
-});
-
 exports.updateLearner = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {

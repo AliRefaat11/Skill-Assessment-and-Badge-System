@@ -3,6 +3,10 @@ const Skill = require('../Models/skillModel');
 
 const createSkill = async (req, res) => {
     try {
+        const { skillName, category } = req.body;
+        if (!skillName || !category) {
+            return res.status(400).json({ error: 'Skill name and category are required' });
+        }
         const skill = new Skill(req.body);
         await skill.save();
         return res.status(201).json(skill);

@@ -16,9 +16,6 @@ exports.getBadges = async (req, res) => {
   }
 };
 
-// @desc    Get a single badge by ID
-// @route   GET /api/badges/:id
-// @access  Public
 exports.getBadgeById = async (req, res) => {
   try {
     const badge = await Badge.findById(req.params.id).populate(
@@ -43,9 +40,6 @@ exports.getBadgeById = async (req, res) => {
   }
 };
 
-// @desc    Get badges by Course ID
-// @route   GET /api/badges/course/:courseId
-// @access  Public
 exports.getBadgesByCourse = async (req, res) => {
   try {
     const badges = await Badge.find({ CourseID: req.params.courseId }).populate(
@@ -65,9 +59,6 @@ exports.getBadgesByCourse = async (req, res) => {
   }
 };
 
-// @desc    Create a new badge
-// @route   POST /api/badges
-// @access  Private (Admin only)
 exports.createBadge = async (req, res) => {
   try {
     const { CourseID, Name, Requirements, Description, Icon } = req.body;
