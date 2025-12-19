@@ -13,7 +13,7 @@
 </script>
 <% } %>
 
-<div class="min-h-screen px-4 py-8">
+<div class="min-h-screen px-4 py-8 profile-page">
   <div class="max-w-6xl mx-auto space-y-6">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -50,8 +50,8 @@
               <span class="text-muted-foreground">XP</span>
               <span class="font-semibold text-foreground"><%= _stats.currentXP %> / <%= _stats.nextLevelXP %></span>
             </div>
-            <div class="w-full h-2 bg-white/10 rounded">
-              <div class="h-2 bg-primary rounded" style="width: <%= _stats.xpProgress %>%"></div>
+            <div class="w-full h-2 rounded" style="background-color: hsla(var(--card), 0.2)">
+              <div class="h-2 bg-primary rounded" data-width="<%= _stats.xpProgress %>%"></div>
             </div>
           </div>
           <p class="text-xs text-muted-foreground"><%= _stats.xpToNextLevel %> XP to next level</p>
@@ -96,8 +96,8 @@
               <span class="text-muted-foreground">Completed</span>
               <span class="font-semibold text-foreground"><%= _stats.completedQuizzes %> / <%= _stats.totalQuizzes %></span>
             </div>
-            <div class="w-full h-2 bg-white/10 rounded">
-              <div class="h-2 bg-secondary rounded" style="width: <%= _stats.completionPercent %>%"></div>
+            <div class="w-full h-2 rounded" style="background-color: hsla(var(--card), 0.2)">
+              <div class="h-2 bg-secondary rounded" data-width="<%= _stats.completionPercent %>%"></div>
             </div>
           </div>
           <p class="text-xs text-muted-foreground"><%= _stats.remainingQuizzes %> quizzes remaining</p>
@@ -107,7 +107,7 @@
 
     <div class="space-y-6">
       <div>
-        <div class="grid grid-cols-3 max-w-md gap-2">
+        <div class="grid grid-cols-4 max-w-lg gap-2">
           <button
             data-tab="badges"
             data-group="profile-tabs"
@@ -130,6 +130,14 @@
             <i data-lucide="bar-chart-3" class="w-4 h-4 mr-1 inline"></i>
             Results
           </button>
+          <button
+            data-tab="edit-profile"
+            data-group="profile-tabs"
+            class="px-3 py-2 rounded-md text-muted-foreground"
+          >
+            <i data-lucide="user" class="w-4 h-4 mr-1 inline"></i>
+            Edit Profile
+          </button>
         </div>
       </div>
 
@@ -143,10 +151,10 @@
           <div class="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             <%
               const badgeCfg = {
-                bronze: {text: 'text-badge-bronze', bg: 'bg-badge-bronze/20', border: 'border-badge-bronze/40', glow: 'shadow-[0_0_20px_hsl(var(--badge-bronze)/0.4)]'},
-                silver: {text: 'text-badge-silver', bg: 'bg-badge-silver/20', border: 'border-badge-silver/40', glow: 'shadow-[0_0_20px_hsl(var(--badge-silver)/0.4)]'},
-                gold: {text: 'text-badge-gold', bg: 'bg-badge-gold/20', border: 'border-badge-gold/40', glow: 'shadow-[0_0_20px_hsl(var(--badge-gold)/0.4)]'},
-                special: {text: 'text-badge-special', bg: 'bg-badge-special/20', border: 'border-badge-special/40', glow: 'shadow-[0_0_30px_hsl(var(--badge-special)/0.5)]'}
+                bronze: {text: 'text-badge-bronze'},
+                silver: {text: 'text-badge-silver'},
+                gold: {text: 'text-badge-gold'},
+                special: {text: 'text-badge-special'}
               };
             %>
             <% if (_badges && _badges.length > 0) { %>
@@ -154,14 +162,14 @@
                 const badgeType = b.type || 'bronze';
                 const unlocked = b.unlocked || false;
                 const cfg = badgeCfg[badgeType] || badgeCfg.bronze;
-                const classes = unlocked ? (cfg.border + ' ' + cfg.glow + ' hover:scale-105 cursor-pointer') : 'border-border/50 grayscale opacity-60';
+                const classes = unlocked ? 'hover:scale-105 cursor-pointer' : 'border-border/50 grayscale opacity-60';
               %>
-              <div class="relative p-6 rounded-xl border-2 transition-all duration-300 bg-card <%= classes %>">
+              <div class="relative p-6 rounded-xl border-2 transition-all duration-300 bg-card <%= classes %>" style="border-color: <%= unlocked ? 'hsla(var(--' + badgeType + '), 0.4)' : 'hsla(var(--border), 0.5)' %>" data-shadow="<%= unlocked ? '0 0 ' + (badgeType === 'special' ? '30' : '20') + 'px hsla(var(--' + badgeType + '), ' + (badgeType === 'special' ? '0.5' : '0.4') + ')' : 'none' %>">
                 <% if (unlocked) { %>
-                <div class="absolute inset-0 rounded-xl opacity-10 <%= cfg.bg %>"></div>
+                <div class="absolute inset-0 rounded-xl" data-bg="<%= 'hsla(var(--' + badgeType + '), 0.1)' %>"></div>
                 <% } %>
                 <div class="relative flex items-start gap-4">
-                  <div class="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center border-2 <%= unlocked ? (cfg.bg + ' ' + cfg.border) : 'bg-white/10 border-border/50' %>">
+                  <div class="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center border-2" data-style="<%= unlocked ? 'border-color: hsla(var(--' + badgeType + '), 0.4); background-color: hsla(var(--' + badgeType + '), 0.2)' : 'background-color: hsla(var(--card), 0.2); border-color: hsla(var(--border), 0.5)' %>">
                     <i data-lucide="award" class="w-8 h-8 <%= unlocked ? cfg.text : 'text-muted-foreground' %>"></i>
                   </div>
                   <div class="flex-1 min-w-0">
@@ -173,7 +181,7 @@
                   </div>
                 </div>
                 <% if (unlocked && badgeType === 'special') { %>
-                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer bg-[length:200%_100%]"></div>
+                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent to-transparent animate-shimmer" style="background-size: 200% 100%; background-image: linear-gradient(to right, transparent, hsla(var(--card), 0.1), transparent)"></div>
                 <% } %>
               </div>
               <% }); %>
@@ -209,8 +217,8 @@
                   <span class="text-foreground font-medium"><%= s.skillName %></span>
                   <span class="text-muted-foreground"><%= s.category %></span>
                 </div>
-                <div class="h-2 bg-white/10 rounded-full overflow-hidden">
-                  <div class="h-full <%= barColor %>" style="width: <%= levelPercent %>%"></div>
+                <div class="h-2 rounded-full overflow-hidden" style="background-color: hsla(var(--card), 0.2)">
+                  <div class="h-full <%= barColor %>" data-width="<%= levelPercent %>%"></div>
                 </div>
               </div>
               <% }); %>
@@ -238,7 +246,7 @@
                 const scoreColor = scorePercent >= 80 ? 'text-success' : (scorePercent >= 50 ? 'text-warning' : 'text-destructive');
                 const xpEarned = r.passed ? '+' + (scorePercent * 2) + ' XP' : '0 XP';
               %>
-              <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+              <div class="flex items-center justify-between p-3 rounded-lg" style="background-color: hsla(var(--card), 0.1)">
                 <div>
                   <p class="font-medium text-foreground"><%= r.courseId ? (r.courseId.Title || 'Assessment') : 'Assessment' %></p>
                   <p class="text-sm text-muted-foreground">
@@ -264,8 +272,100 @@
           </div>
         </div>
       </div>
+
+      <div class="hidden" data-tab-content="edit-profile" data-group="profile-tabs">
+        <div
+          class="bg-gradient-card border border-border shadow-card rounded-xl"
+        >
+          <div class="px-6 py-4 border-b border-border/50">
+            <h3 class="text-foreground font-semibold">Edit Profile</h3>
+          </div>
+          <div class="p-6">
+            <form class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-foreground mb-1">First Name</label>
+                  <input type="text" class="input w-full" placeholder="Enter first name">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-foreground mb-1">Last Name</label>
+                  <input type="text" class="input w-full" placeholder="Enter last name">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Phone Number</label>
+                <input type="tel" class="input w-full" placeholder="Enter phone number">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Date of Birth</label>
+                <input type="date" class="input w-full">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Gender</label>
+                <select class="input w-full">
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Skill</label>
+                <select class="input w-full">
+                  <option value="">Select a skill</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="csharp">C#</option>
+                  <option value="php">PHP</option>
+                  <option value="ruby">Ruby</option>
+                  <option value="go">Go</option>
+                  <option value="rust">Rust</option>
+                  <option value="swift">Swift</option>
+                  <option value="kotlin">Kotlin</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="html">HTML</option>
+                  <option value="css">CSS</option>
+                  <option value="react">React</option>
+                  <option value="angular">Angular</option>
+                  <option value="vue">Vue.js</option>
+                  <option value="nodejs">Node.js</option>
+                  <option value="django">Django</option>
+                  <option value="flask">Flask</option>
+                  <option value="laravel">Laravel</option>
+                  <option value="spring">Spring</option>
+                  <option value="dotnet">.NET</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Education</label>
+                <input type="text" class="input w-full" placeholder="Enter education level or institution">
+              </div>
+              <div class="pt-4">
+                <button type="submit" class="btn-primary px-6 py-2 rounded-md">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-width]').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+    document.querySelectorAll('[data-shadow]').forEach(el => {
+      el.style.boxShadow = el.dataset.shadow;
+    });
+    document.querySelectorAll('[data-bg]').forEach(el => {
+      el.style.backgroundColor = el.dataset.bg;
+    });
+    document.querySelectorAll('[data-style]').forEach(el => {
+      el.style.cssText += el.dataset.style;
+    });
+  });
+</script>
 
 <%- include('../includes/footer') %>
