@@ -4,10 +4,11 @@ const bcrypt = require("bcryptjs");
 const ApiError = require("../Utils/apiError");
 const User = require("../Models/userModel");
 const Learner = require("../Models/learnerModel");
+const LearnerSkill = require("../Models/learnerSkillModel");
 const { createToken } = require("../Utils/createToken");
 
 exports.signup = asyncHandler(async (req, res, next) => {
-  const { FName, LName, Email, Password, PhoneNumber, Gender, dateOfBirth } =
+  const { FName, LName, Email, Password, PhoneNumber, Gender, dateOfBirth, level, education, skillId } =
     req.body;
 
   const hashedPassword = await bcrypt.hash(Password, 10);
@@ -24,17 +25,19 @@ exports.signup = asyncHandler(async (req, res, next) => {
   });
 
   const learner = await Learner.create({
-    UserID: user._id
+    UserID: user._id,
+    Education: education,
+    Level: level,
   });
+
+  if (skillId) {
+    await LearnerSkill.create({
+      learnerID: learner._id,
+      skillID: skillId,
+    });
+  }
 
   const token = createToken(user._id);
-
-  // Set token as HTTP-only cookie for browser sessions
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 90 * 24 * 60 * 60 * 1000 // 90 days
-  });
 
   res.status(201).json({
     status: "success",
@@ -53,13 +56,6 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
   const token = createToken(user._id);
   
-  // Set token as HTTP-only cookie for browser sessions
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 90 * 24 * 60 * 60 * 1000 // 90 days
-  });
-  
   res.status(200).json({
     status: "success",
     token,
@@ -67,16 +63,28 @@ exports.login = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.logout = (req, res) => {
+  // Clear the token cookie
+  res.cookie('token', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    expires: new Date(0) // Set expiration to past date to delete cookie
+  });
+  
+  // Redirect to auth page
+  res.redirect('/api/v1/auth');
+}; 
+
 exports.auth = asyncHandler(async (req, res, next) => {
   let token;
-  // Check for token in Authorization header
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
-  // Check for token in cookies (for browser sessions)
+
   else if (req.cookies && req.cookies.token) {
     token = req.cookies.token;
   }
@@ -101,7 +109,6 @@ exports.auth = asyncHandler(async (req, res, next) => {
   next();
 });
 
-// @desc    Authorization (User Permissions)
 exports.allowedTo = (...Roles) =>
   asyncHandler(async (req, res, next) => {
     if (!Roles.includes(req.user.Role)) {

@@ -4,7 +4,7 @@ const LearnerSchema = new mongoose.Schema({
   
   UserID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',         // references the User collection
+    ref: 'User',
     required: true
   },
   Level: {
@@ -22,10 +22,6 @@ const LearnerSchema = new mongoose.Schema({
     enum: ['High School', 'Bachelor', 'Master', 'Doctorate', 'Other'],
     required: false
   },
-  Field_Of_Interest: {
-    type: String,
-    required: false
-  }
 }, {
   timestamps: true
 });
