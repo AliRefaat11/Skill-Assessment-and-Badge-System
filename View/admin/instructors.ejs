@@ -1,0 +1,32 @@
+<%- include("partials/header", { title: "Instructors", pageCss: "/assets/css/admin/users.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="pageHead">
+  <div class="searchBox">
+    <input id="searchInstructors" type="text" placeholder="Search instructors..." />
+  </div>
+</div>
+
+<div class="tableWrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+      </tr>
+    </thead>
+
+    <tbody id="instructorsBody">
+      <% instructors.forEach(u => { %>
+        <tr data-name="<%= (u.FName + ' ' + u.LName).toLowerCase() %>">
+          <td><%= u.FName %> <%= u.LName %></td>
+          <td class="muted"><%= u.Email %></td>
+          <td class="muted"><%= u.PhoneNumber || "-" %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/instructors.js" }) %>
