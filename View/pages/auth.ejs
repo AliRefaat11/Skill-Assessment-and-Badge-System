@@ -251,7 +251,10 @@
     async function loadSkills() {
       const skillSelect = document.getElementById('skillId');
       try {
-        const res = await fetch('/api/v1/skills');
+        const res = await fetch('/api/v1/skill');
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const skills = await res.json();
         
         skillSelect.innerHTML = '<option value="">Select a Skill</option>';
@@ -288,7 +291,8 @@
         }
       } catch (err) {
         console.error('Failed to load skills:', err);
-        skillSelect.innerHTML = '<option value="">Failed to load skills</option>';
+        console.error('Error details:', err.message);
+        skillSelect.innerHTML = '<option value="">Failed to load skills. Please refresh the page.</option>';
       }
     }
     
