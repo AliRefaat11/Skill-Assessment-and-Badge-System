@@ -40,7 +40,6 @@ app.use("/api/v1/question", questionRoute);
 app.use("/api/v1/assessment", assessmentRoute);
 app.use("/api/v1/badge", badgeRoutes);
 app.use('/api/v1/skill', skillRoute);
-app.get('/api/v1/auth', authservice.renderAuth);
 
 app.all("/", (req, res, next) => {
   next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
