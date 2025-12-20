@@ -1,12 +1,126 @@
-const Badge = require('../Models/badgeModel');
+const Badge = require("../Models/badgeModel");
 
-// CREATE a badge
+exports.getBadges = async (req, res) => {
+  try {
+    const badges = await Badge.find().populate("CourseID", "Name Description");
+    res.status(200).json({
+      success: true,
+      count: badges.length,
+      data: badges,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getBadgeById = async (req, res) => {
+  try {
+    const badge = await Badge.findById(req.params.id).populate(
+      "CourseID",
+      "Name Description"
+    );
+    if (!badge) {
+      return res.status(404).json({
+        success: false,
+        message: "Badge not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: badge,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getBadgesByCourse = async (req, res) => {
+  try {
+    const badges = await Badge.find({ CourseID: req.params.courseId }).populate(
+      "CourseID",
+      "Name Description"
+    );
+    res.status(200).json({
+      success: true,
+      count: badges.length,
+      data: badges,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 exports.createBadge = async (req, res) => {
   try {
-    const badge = await Badge.create(req.body);
+    const { CourseID, Name, Requirements, Description, Icon } = req.body;
+
+    // Validation
+    if (!CourseID || !Name || !Requirements) {
+      return res.status(400).json({
+        success: false,
+        message: "CourseID, Name, and Requirements are required",
+      });
+    }
+
+    const badge = await Badge.create({
+      CourseID,
+      Name,
+      Requirements,
+      Description,
+      Icon,
+    });
+
     res.status(201).json({
       success: true,
       message: "Badge created successfully",
+      data: badge,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Update a badge
+// @route   PUT /api/badges/:id
+// @access  Private (Admin only)
+exports.updateBadge = async (req, res) => {
+  try {
+    const { CourseID, Name, Requirements, Description, Icon } = req.body;
+
+    const badge = await Badge.findByIdAndUpdate(
+      req.params.id,
+      {
+        CourseID,
+        Name,
+        Requirements,
+        Description,
+        Icon,
+      },
+      { new: true, runValidators: true }
+    ).populate("CourseID", "Name Description");
+
+    if (!badge) {
+      return res.status(404).json({
+        success: false,
+        message: "Badge not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Badge updated successfully",
       data: badge
     });
   } catch (error) {
@@ -14,53 +128,7 @@ exports.createBadge = async (req, res) => {
   }
 };
 
-// GET all badges
-exports.getBadges = async (req, res) => {
-  try {
-    const badges = await Badge.find().populate('CourseID');
-    res.status(200).json({ success: true, data: badges });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
 
-// GET one badge by ID
-exports.getBadgeById = async (req, res) => {
-  try {
-    const badge = await Badge.findById(req.params.id).populate('CourseID');
-    if (!badge) {
-      return res.status(404).json({ success: false, message: "Badge not found" });
-    }
-    res.status(200).json({ success: true, data: badge });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// UPDATE badge
-exports.updateBadge = async (req, res) => {
-  try {
-    const updatedBadge = await Badge.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true } // return updated object
-    );
-
-    if (!updatedBadge) {
-      return res.status(404).json({ success: false, message: "Badge not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Badge updated successfully",
-      data: updatedBadge
-    });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
-
-// DELETE badge
 exports.deleteBadge = async (req, res) => {
   try {
     const badge = await Badge.findByIdAndDelete(req.params.id);
@@ -70,9 +138,13 @@ exports.deleteBadge = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Badge deleted successfully"
+      message: "Badge deleted successfully",
+      data: badge,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

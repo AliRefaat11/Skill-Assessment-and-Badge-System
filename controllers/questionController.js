@@ -1,11 +1,9 @@
 const Question = require("../Models/questionsModel");
 const Assessment = require("../Models/assesmentModel");
 
-
-// POST /api/admin/questions
 exports.createQuestion = async (req, res, next) => {
   try {
-    const { assessmentId, type, text, points, options, correctAnswer } = req.body;
+    const { assessmentId, type, text, points, correctAnswer } = req.body;
 
     const assessment = await Assessment.findById(assessmentId);
     if (!assessment) {
@@ -17,7 +15,6 @@ exports.createQuestion = async (req, res, next) => {
       type,
       text,
       points,
-      options,
       correctAnswer
     });
 

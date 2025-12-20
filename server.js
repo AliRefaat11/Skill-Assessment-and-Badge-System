@@ -2,7 +2,6 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 
-
 dotenv.config({ path: "config.env" });
 
 const ApiError = require("./Utils/apiError");
@@ -22,7 +21,6 @@ const skillRoute = require('./routes/skillRoute');
 
 const adminRoutes = require("./routes/adminRoutes");
 
-
 dbconnection();
 
 const app = express();
@@ -31,12 +29,13 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "View")); // because your folder is named View
 app.use("/assets", express.static(path.join(__dirname, "View/assets")));
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routes FIRST
+
+
+
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
@@ -65,4 +64,4 @@ app.use(globalError);
 const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
-}); 
+});
