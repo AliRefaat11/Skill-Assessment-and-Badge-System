@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup, login, logout } = require("../Services/authService");
+const { signup, login, logout, renderAuth} = require("../Services/authService");
 
 const {
   signupValidator,
@@ -9,6 +9,7 @@ const {
 
 const router = express.Router();
 
+router.route("/").get(renderAuth);
 router.route("/signup").post(signupValidator, signup);
 router.route("/login").post(loginValidator, login);
 router.route("/logout").get(logout);

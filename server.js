@@ -39,6 +39,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
+app.use("/api/v1/instructor", instructorRoute);
+app.use("/api/v1/question", questionRoute);
+app.use("/api/v1/assessment", assessmentRoute);
+app.use("/api/v1/badge", badgeRoutes);
+app.use('/api/v1/skill', skillRoute);
+
+app.all("/", (req, res, next) => {
 app.use("/api/v1/courses", courseRoute);
 
 app.use("/api/v1/questions", questionRoute);

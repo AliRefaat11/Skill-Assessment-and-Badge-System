@@ -353,7 +353,6 @@
           localStorage.setItem('token', result.token);
           localStorage.setItem('role', result.role);
           
-          // Redirect based on role
           if (result.role === 'Learner') {
             window.location.href = '/api/v1/learner/profile';
           } else if (result.role === 'Instructor') {
