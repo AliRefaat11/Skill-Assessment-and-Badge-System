@@ -1,0 +1,34 @@
+<%- include("partials/header", { title: "Courses", pageCss: "/assets/css/admin/courses.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="pageHead">
+  <div class="searchBox">
+    <input id="searchCourses" type="text" placeholder="Search courses..." />
+  </div>
+
+  <button class="btnPrimary" id="btnAddCourse">+ Add Course</button>
+</div>
+
+<div class="cardList" id="coursesList">
+  <% courses.forEach(c => { %>
+    <div class="courseCard" data-title="<%= c.name.toLowerCase() %>">
+      <div class="courseTop">
+        <div class="courseTitle"><%= c.name %></div>
+        <div class="pill <%= (c.difficultyLevel || '').toLowerCase() %>"><%= c.difficultyLevel %></div>
+      </div>
+
+      <div class="courseMeta">
+        <div><span>Duration</span> <%= c.duration %></div>
+        <div><span>Price</span> <%= c.price %></div>
+      </div>
+
+      <div class="courseActions">
+        <a class="btnGhost" href="/admin/courses/<%= c._id %>/assessments">Assessments</a>
+        <button class="btnIcon">✎</button>
+        <button class="btnDanger">🗑</button>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/courses.js" }) %>

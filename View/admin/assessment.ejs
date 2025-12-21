@@ -1,0 +1,53 @@
+<%- include("partials/header", { title: "Assessments", pageCss: "/assets/css/admin/assessments.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="crumbs">
+  <a href="/admin/courses">Courses</a>
+  <span>›</span>
+  <span><%= course ? course.name : "Unknown Course" %></span>
+</div>
+
+<div class="pageHead">
+  <div class="titleBlock">
+    <h2>Assessments</h2>
+    <p class="muted">Manage assessments inside this course</p>
+  </div>
+
+  <button class="btnPrimary" id="btnAddAssessment">+ Add Assessment</button>
+</div>
+
+<% if (error) { %>
+  <div class="errorBox"><%= error %></div>
+<% } %>
+
+<div class="tableWrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Duration</th>
+        <th>Total Questions</th>
+        <th>Grade</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% assessments.forEach(a => { %>
+        <tr>
+          <td><span class="pill"><%= a.status %></span></td>
+          <td><%= a.durationMins %> mins</td>
+          <td><%= a.totalQuestions %></td>
+          <td><%= a.grade || "-" %></td>
+          <td class="rowActions">
+            <a class="btnGhost" href="/admin/assessments/<%= a._id %>/questions">Questions</a>
+            <button class="btnIcon">✎</button>
+            <button class="btnDanger">🗑</button>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/assessments.js" }) %>

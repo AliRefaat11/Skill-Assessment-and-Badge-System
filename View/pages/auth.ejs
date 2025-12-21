@@ -251,6 +251,9 @@
       const skillSelect = document.getElementById('skillId');
       try {
         const res = await fetch('/api/v1/skill');
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const skills = await res.json();
         
         skillSelect.innerHTML = '<option value="">Select a Skill</option>';
@@ -287,7 +290,8 @@
         }
       } catch (err) {
         console.error('Failed to load skills:', err);
-        skillSelect.innerHTML = '<option value="">Failed to load skills</option>';
+        console.error('Error details:', err.message);
+        skillSelect.innerHTML = '<option value="">Failed to load skills. Please refresh the page.</option>';
       }
     }
     
@@ -348,13 +352,12 @@
           localStorage.setItem('token', result.token);
           localStorage.setItem('role', result.role);
           
-          // Redirect based on role
           if (result.role === 'Learner') {
             window.location.href = '/api/v1/learner/profile';
           } else if (result.role === 'Instructor') {
             window.location.href = '/api/v1/instructor/profile';
           } else if (result.role === 'Admin') {
-            window.location.href = '/api/v1/admin';
+            window.location.href = '/admin';
           } else {
             window.location.href = '/';
           }

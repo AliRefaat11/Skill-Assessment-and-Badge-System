@@ -1,0 +1,34 @@
+<%- include("partials/header", { title: "Users", pageCss: "/assets/css/admin/users.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="pageHead">
+  <div class="searchBox">
+    <input id="searchUsers" type="text" placeholder="Search users..." />
+  </div>
+</div>
+
+<div class="tableWrap" id="usersTableWrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Phone</th>
+      </tr>
+    </thead>
+
+    <tbody id="usersBody">
+      <% users.forEach(u => { %>
+        <tr data-name="<%= (u.FName + ' ' + u.LName).toLowerCase() %>">
+          <td><%= u.FName %> <%= u.LName %></td>
+          <td class="muted"><%= u.Email %></td>
+          <td><span class="pill"><%= u.Role %></span></td>
+          <td class="muted"><%= u.PhoneNumber || "-" %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/users.js" }) %>

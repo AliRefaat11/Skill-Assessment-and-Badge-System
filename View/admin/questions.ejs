@@ -1,0 +1,52 @@
+<%- include("partials/header", { title: "Questions", pageCss: "/assets/css/admin/questions.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="crumbs">
+  <a href="/admin/courses">Courses</a>
+  <span>›</span>
+  <a href="/admin/courses/<%= assessment && assessment.courseId ? assessment.courseId._id : '' %>/assessments">Assessments</a>
+  <span>›</span>
+  <span>Questions</span>
+</div>
+
+<div class="pageHead">
+  <div class="titleBlock">
+    <h2>Questions</h2>
+    <p class="muted"><%= assessment ? assessment.courseId.name : "" %></p>
+  </div>
+
+  <button class="btnPrimary" id="btnAddQuestion">+ Add Question</button>
+</div>
+
+<% if (error) { %>
+  <div class="errorBox"><%= error %></div>
+<% } %>
+
+<div class="tableWrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Text</th>
+        <th>Type</th>
+        <th>Points</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% questions.forEach(q => { %>
+        <tr>
+          <td><%= q.text %></td>
+          <td><span class="pill"><%= q.type %></span></td>
+          <td><%= q.points %></td>
+          <td class="rowActions">
+            <button class="btnIcon">✎</button>
+            <button class="btnDanger">🗑</button>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/questions.js" }) %>

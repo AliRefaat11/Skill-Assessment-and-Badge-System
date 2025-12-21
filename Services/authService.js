@@ -39,6 +39,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
   const token = createToken(user._id);
 
+  res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
   res.status(201).json({
     status: "success",
     message: "User created. Complete your learner profile.",
@@ -56,6 +57,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
   const token = createToken(user._id);
   
+  res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
   res.status(200).json({
     status: "success",
     token,
@@ -64,14 +66,12 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  // Clear the token cookie
   res.cookie('token', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    expires: new Date(0) // Set expiration to past date to delete cookie
+    expires: new Date(0)
   });
   
-  // Redirect to auth page
   res.redirect('/api/v1/auth');
 }; 
 
