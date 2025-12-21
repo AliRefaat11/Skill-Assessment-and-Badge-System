@@ -1,0 +1,38 @@
+.formCard {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 18px;
+  max-width: 720px;
+}
+
+.formCard label {
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: 600;
+}
+
+.formCard input,
+.formCard select,
+.formCard textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.alert {
+  max-width: 720px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 12px 0;
+  border: 1px solid #ddd;
+}

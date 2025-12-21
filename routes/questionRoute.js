@@ -6,20 +6,21 @@ const {
   updateQuestion,
   deleteQuestion,
   getQuestionsByAssessment
-} = require('../controllers/questionController');
+} = require('../Controllers/questionController');
+const { auth, allowedTo } = require('../Services/authService');
 
 const router = express.Router();
 
 router.route('/')
   .post(createQuestion)
   .get(getQuestions);
+  
+router.route('/assessment/:assessmentId')
+  .get(getQuestionsByAssessment);
 
 router.route('/:id')
   .get(getQuestionById)
   .put(updateQuestion)
   .delete(deleteQuestion);
-
-router.route('/assessment/:assessmentId')
-  .get(getQuestionsByAssessment);
 
 module.exports = router;

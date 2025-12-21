@@ -7,7 +7,7 @@ const {
   updateCourse,
   deleteCourse,
   getCoursesBySkill
-} = require("../controllers/courseController");
+} = require("../Controllers/courseController");
 
 // Get all courses (with optional query params: ?skillID=xxx&difficultyLevel=Beginner)
 router.get("/", getAllCourses);
@@ -17,6 +17,7 @@ router.get("/skill/:skillID", getCoursesBySkill);
 
 // Get a single course by ID
 router.get("/:id", getCourseById);
+
 
 // Create a new course
 router.post("/", createCourse);

@@ -5,7 +5,8 @@ const {
   getAssessmentById,
   updateAssessment,
   deleteAssessment
-} = require('../controllers/assessmentController');
+} = require('../Controllers/assessmentController');
+const { auth, allowedTo } = require('../Services/authService');
 
 const router = express.Router();
 
