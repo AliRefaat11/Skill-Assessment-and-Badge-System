@@ -1,22 +1,36 @@
 const User = require("../Models/userModel");
+const bcrypt = require("bcryptjs");
 const mongoose = require('mongoose');
 
 exports.createUser = async (req, res) => {
     try {
         const {FName, LName, Email, Password, PhoneNumber, Gender, Role} = req.body;
+
+        const hashedPassword = await bcrypt.hash(Password, 10);
+
         const newUser = new User({
             FName,
             LName,
             Email,
-            Password,
+            Password: hashedPassword,
             PhoneNumber,
             Gender,
             Role
         });
-        const savedUser = await newUser.save();
-        res.status(201).json(savedUser);
+
+        const user = await newUser.save();
+
+        res.status(201).json({
+            status: "success",
+            message: "User created.",
+            UserID: user._id,
+          });
     } catch (error) {
-        res.status(500).json({ message: "Error creating user", error });
+        console.error("CREATE USER ERROR:", error);
+        res.status(500).json({
+            message: "Error creating user",
+            error: error.message
+        });
     }
 };
 

@@ -11,7 +11,7 @@ const CourseSchema = new mongoose.Schema({
         ref: "Instructor",
         required: true
     },
-    Name: {
+    name: {
         type: String,
         required: true,
         trim: true,
