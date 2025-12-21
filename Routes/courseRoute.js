@@ -19,7 +19,6 @@ router.route('/:id')
   .put(updateCourse)
   .delete(deleteCourse);
 
-// Optional: courses by skill
 router.get('/skill/:skillID', getCoursesBySkill);
 
 module.exports = router;

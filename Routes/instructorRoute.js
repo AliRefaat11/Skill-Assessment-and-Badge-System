@@ -5,6 +5,6 @@ const { auth, allowedTo } = require('../Services/authService');
 
 const router = express.Router();
 
-router.post("/",allowedTo("Admin"), auth, createInstructor);
+router.post("/",createInstructor);
 
 module.exports = router;

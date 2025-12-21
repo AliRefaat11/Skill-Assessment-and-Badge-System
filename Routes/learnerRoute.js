@@ -12,4 +12,5 @@ router.get("/", allowedTo("Admin"), auth, getAllLearners);
 router.get("/profile", auth, allowedTo("Learner"), renderprofile);
 router.get("/:id", auth, getLearnerById);
 router.delete("/:id", auth, deleteLearner);
+
 module.exports = router;

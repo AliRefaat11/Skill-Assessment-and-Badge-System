@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
+const cookieParser = require('cookie-parser');
 
 dotenv.config({ path: "config.env" });
 
@@ -25,16 +26,17 @@ dbconnection();
 
 const app = express();
 
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "View")); // because your folder is named View
+app.set("views", path.join(__dirname, "View")); 
 app.use("/assets", express.static(path.join(__dirname, "View/assets")));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-
-
-
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
@@ -84,16 +86,11 @@ app.get('/api/admin/stats', async (req, res) => {
 // Admin pages (EJS)
 app.use(adminRoutes);
 
-// Not Found Route
-app.use((req, res, next) => {
+app.all("/", (req, res, next) => {
   next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
 });
 
-
-
-// Global Error Handler
 app.use(globalError);
-
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
