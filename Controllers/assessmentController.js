@@ -1,23 +1,22 @@
 const Question = require("../Models/questionsModel");
 const Assessment = require("../Models/assesmentModel");
-const Course = require("../Models/courseModel");
+const Skill = require("../Models/skillModel");
 
 exports.createAssessment = async (req, res, next) => {
   try {
-    const { courseId, durationMins, status, totalQuestions, grade } = req.body;
+    console.log('createAssessment called with body:', req.body);
+    const { skillId, duration, status, TotalMarks } = req.body;
 
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ success: false, message: "Course not found" });
+    const skill = await Skill.findById(skillId);
+    if (!skill) {
+      return res.status(404).json({ success: false, message: "Skill not found" });
     }
 
     const assessment = await Assessment.create({
-      courseId,
-      durationMins,
+      skillId,
+      duration,
       status: status || "not-started",
-      totalQuestions: totalQuestions || 0,
-      score: 0,
-      grade: grade || ""
+      TotalMarks: TotalMarks || 0
     });
 
     res.status(201).json({ success: true, data: assessment });
@@ -26,10 +25,17 @@ exports.createAssessment = async (req, res, next) => {
   }
 };
 
+
+
+// GET /api/admin/assessments
 exports.getAssessments = async (req, res, next) => {
   try {
-    const assessments = await Assessment.find()
-      .populate("courseId", "name")
+    const query = {};
+    if (req.query.skillId) {
+      query.skillId = req.query.skillId;
+    }
+    const assessments = await Assessment.find(query)
+      .populate("skillId", "name")
       .sort({ createdAt: -1 });
 
     res.json({ success: true, data: assessments });
@@ -41,7 +47,7 @@ exports.getAssessments = async (req, res, next) => {
 exports.getAssessmentById = async (req, res, next) => {
   try {
     const assessment = await Assessment.findById(req.params.id)
-      .populate("courseId", "name");
+      .populate("skillId", "name");
 
     if (!assessment) {
       return res.status(404).json({ success: false, message: "Assessment not found" });
