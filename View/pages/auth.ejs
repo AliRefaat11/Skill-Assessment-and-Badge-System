@@ -247,11 +247,10 @@
     const tabs = document.querySelectorAll('[data-tab][data-group="auth"]');
     const contents = document.querySelectorAll('[data-tab-content][data-group="auth"]');
 
-    // Fetch skills from database and populate dropdown
     async function loadSkills() {
       const skillSelect = document.getElementById('skillId');
       try {
-        const res = await fetch('/api/v1/skills');
+        const res = await fetch('/api/v1/skill');
         const skills = await res.json();
         
         skillSelect.innerHTML = '<option value="">Select a Skill</option>';
