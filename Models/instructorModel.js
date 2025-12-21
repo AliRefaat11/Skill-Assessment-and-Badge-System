@@ -20,10 +20,6 @@ const instructorSchema = new mongoose.Schema({
         enum: ["active", "inactive"],
         default: "active"
     },
-    IsVerified: {
-        type: Boolean,
-        default: false
-    },
     Specialization: {
         type: String,
         required: true

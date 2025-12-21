@@ -2,16 +2,20 @@
 <%- include("partials/sidebar", { activeTab }) %>
 
 <div class="crumbs">
-  <a href="/admin/courses">Courses</a>
+  <a href="/admin/skills">Skills</a>
   <span>›</span>
-  <span><%= course ? course.name : "Unknown Course" %></span>
+  <span><%= skill ? skill.name : "Unknown Skill" %></span>
 </div>
 
 <div class="pageHead">
   <div class="titleBlock">
     <h2>Assessments</h2>
-    <p class="muted">Manage assessments inside this course</p>
+    <p class="muted">Manage assessments inside this skill</p>
   </div>
+
+  <a class="btn btn-primary" href="/admin/skills/<%= skill._id %>/assessments/new">
+  + Add Assessment
+</a>
 
   <button class="btnPrimary" id="btnAddAssessment">+ Add Assessment</button>
 </div>
@@ -33,19 +37,7 @@
     </thead>
 
     <tbody>
-      <% assessments.forEach(a => { %>
-        <tr>
-          <td><span class="pill"><%= a.status %></span></td>
-          <td><%= a.durationMins %> mins</td>
-          <td><%= a.totalQuestions %></td>
-          <td><%= a.grade || "-" %></td>
-          <td class="rowActions">
-            <a class="btnGhost" href="/admin/assessments/<%= a._id %>/questions">Questions</a>
-            <button class="btnIcon">✎</button>
-            <button class="btnDanger">🗑</button>
-          </td>
-        </tr>
-      <% }) %>
+      <!-- Data loaded via JS -->
     </tbody>
   </table>
 </div>

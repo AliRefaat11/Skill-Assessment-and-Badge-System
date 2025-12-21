@@ -12,13 +12,15 @@ const globalError = require("./middleware/errorMiddleware");
 const userRoute = require("./Routes/userRoute");
 const authRoute = require("./Routes/authRoute");
 const learnerRoute = require("./Routes/learnerRoute");
-const instructorRoute = require("./Routes/instructorRoute")
-const courseRoute = require("./Routes/courseRoute");
+
+const assesmentRoute = require("./Routes/assesmentRoute");
 const questionRoute = require("./Routes/questionRoute");
-const assessmentRoute = require("./Routes/assesmentRoute");
-const badgeRoute = require('./Routes/badgeRoute');
+
+const badgeRoute = require("./Routes/badgeRoute");
 const skillRoute = require('./Routes/skillRoute');
+
 const adminRoutes = require("./Routes/adminRoutes");
+
 
 dbconnection();
 
@@ -39,13 +41,49 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
-app.use("/api/v1/instructor", instructorRoute);
-app.use("/api/v1/question", questionRoute);
-app.use("/api/v1/assessment", assessmentRoute);
-app.use("/api/v1/badge", badgeRoute);
-app.use('/api/v1/skill', skillRoute);
-app.use("/api/v1/courses", courseRoute);
 
+app.use("/api/v1/assessments", assesmentRoute);
+app.use("/api/v1/questions", questionRoute);
+app.use("/api/v1/users", userRoute);
+
+
+app.use('/api/v1/badges', badgeRoute);
+app.use('/api/v1/skills', skillRoute);
+
+// Admin API routes
+app.use('/api/admin/skills', skillRoute);
+app.use('/api/admin/assessments', assesmentRoute);
+app.use('/api/admin/questions', questionRoute);
+app.use('/api/admin/users', userRoute);
+
+// Admin API routes
+const { auth, allowedTo } = require('./Services/authService');
+const User = require("./Models/userModel");
+const Skill = require("./Models/skillModel");
+const Assessment = require("./Models/assesmentModel");
+const Learner = require("./Models/learnerModel");
+
+async function buildStats() {
+  const [totalUsers, totalSkills, totalQuizzes, activeUsers] = await Promise.all([
+    User.countDocuments(),
+    Skill.countDocuments(),
+    Assessment.countDocuments(),
+    Learner.countDocuments()
+  ]);
+
+  return { totalUsers, totalSkills, totalQuizzes, activeUsers };
+}
+
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const stats = await buildStats();
+    res.json({ success: true, data: stats });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Admin pages (EJS)
 app.use(adminRoutes);
 
 app.all("/", (req, res, next) => {

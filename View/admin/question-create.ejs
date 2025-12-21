@@ -1,0 +1,46 @@
+<%- include("partials/header", { title: "Create Question", pageCss: "/assets/css/admin/form-create.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="crumbs">
+  <a href="/admin/courses">Courses</a>
+  <span>›</span>
+  <a href="/admin/courses/<%= assessment && assessment.courseId ? assessment.courseId._id : '' %>/assessments">Assessments</a>
+  <span>›</span>
+  <a href="/admin/assessments/<%= assessmentId %>/questions">Questions</a>
+  <span>›</span>
+  <span>Create Question</span>
+</div>
+
+<div class="pageHead">
+  <div class="titleBlock">
+    <h2>Create Question</h2>
+    <p class="muted"><%= assessment ? assessment.courseId.name : "" %></p>
+  </div>
+</div>
+
+<div id="alertBox" class="alert" style="display:none;"></div>
+
+<form id="createQuestionForm" class="formCard" data-assessment-id="<%= assessmentId %>">
+  <label>Question Text</label>
+  <textarea id="text" rows="4" placeholder="Write the question here..." required></textarea>
+
+  <label>Type</label>
+  <select id="type" required>
+    <option value="mcq">MCQ</option>
+    <option value="true-false">True or False</option>
+    <option value="short">Short Answer</option>
+  </select>
+
+  <label>Points</label>
+  <input id="points" type="number" min="1" value="1" required />
+
+  <label>Correct Answer</label>
+  <input id="correctAnswer" type="text" placeholder="e.g. A" required />
+
+  <div class="formActions">
+    <a class="btnGhost" href="/admin/assessments/<%= assessmentId %>/questions">Cancel</a>
+    <button class="btnPrimary" type="submit">Create Question</button>
+  </div>
+</form>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/question-create.js" }) %>
