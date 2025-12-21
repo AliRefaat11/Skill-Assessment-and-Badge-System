@@ -15,7 +15,7 @@
     <p class="muted"><%= assessment ? assessment.courseId.name : "" %></p>
   </div>
 
-  <button class="btnPrimary" id="btnAddQuestion">+ Add Question</button>
+<button class="btnPrimary" id="btnAddQuestion" data-assessment-id="<%= assessmentId %>">+ Add Question</button>
 </div>
 
 <% if (error) { %>
@@ -34,17 +34,7 @@
     </thead>
 
     <tbody>
-      <% questions.forEach(q => { %>
-        <tr>
-          <td><%= q.text %></td>
-          <td><span class="pill"><%= q.type %></span></td>
-          <td><%= q.points %></td>
-          <td class="rowActions">
-            <button class="btnIcon">✎</button>
-            <button class="btnDanger">🗑</button>
-          </td>
-        </tr>
-      <% }) %>
+      <!-- Data loaded via JS -->
     </tbody>
   </table>
 </div>

@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const assessmentSchema = new mongoose.Schema(
   {
-    courseId:{ 
+    skillId:{ 
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Course", required: true 
+      ref: "Skill", required: true 
     },
     duration:{ 
       type: Number, 
@@ -17,7 +17,8 @@ const assessmentSchema = new mongoose.Schema(
     },
     TotalMarks: {
       type: Number,
-      required: true
+      required: true,
+      default: 0 
     }
   },
   { timestamps: true }

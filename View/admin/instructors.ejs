@@ -18,13 +18,7 @@
     </thead>
 
     <tbody id="instructorsBody">
-      <% instructors.forEach(u => { %>
-        <tr data-name="<%= (u.FName + ' ' + u.LName).toLowerCase() %>">
-          <td><%= u.FName %> <%= u.LName %></td>
-          <td class="muted"><%= u.Email %></td>
-          <td class="muted"><%= u.PhoneNumber || "-" %></td>
-        </tr>
-      <% }) %>
+      <!-- Data loaded via JS -->
     </tbody>
   </table>
 </div>
