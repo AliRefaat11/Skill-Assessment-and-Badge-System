@@ -28,6 +28,8 @@ const assesmentRoute = require("./Routes/assesmentRoute");
 const questionRoute = require("./Routes/questionRoute");
 const badgeRoute = require("./Routes/badgeRoute");
 const skillRoute = require('./Routes/skillRoute');
+const learnerBadgeRoute = require('./Routes/learnerBadgeRoute');
+const learnerSkillRoute = require('./Routes/learnerSkillRoute');
 const adminRoutes = require("./Routes/adminRoutes");
 
 dbconnection();
@@ -39,6 +41,8 @@ app.use("/api/v1/assessments", assesmentRoute);
 app.use("/api/v1/questions", questionRoute);
 app.use('/api/v1/badges', badgeRoute);
 app.use('/api/v1/skills', skillRoute);
+app.use('/api/v1/learnerBadges', learnerBadgeRoute);
+app.use('/api/v1/learnerSkills', learnerSkillRoute);
 // Admin API routes
 app.use('/api/admin/skills', skillRoute);
 app.use('/api/admin/assessments', assesmentRoute);

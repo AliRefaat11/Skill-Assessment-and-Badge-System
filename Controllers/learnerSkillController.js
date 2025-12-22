@@ -67,3 +67,20 @@ exports.deleteLearnerSkill = async (req, res) => {
     });
   }
 };
+
+exports.getAllSkillsByLearner = async (req, res) => {
+    try {
+        const { learnerID } = req.params;
+        const learnerSkills = await learnerSkillModel.find({ learnerID });
+        res.status(200).json({
+            success: true,
+            data: learnerSkills
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching learner skills',
+            error: error.message
+        });
+    }
+};
