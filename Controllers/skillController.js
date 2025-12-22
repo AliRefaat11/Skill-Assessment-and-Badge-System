@@ -1,4 +1,3 @@
-// ...existing code...
 const Skill = require('../Models/skillModel');
 const Assessment = require("../Models/assesmentModel");
 const Question = require("../Models/questionsModel");

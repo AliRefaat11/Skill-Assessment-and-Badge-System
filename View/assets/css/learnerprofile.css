@@ -1,0 +1,3 @@
+/* Learner profile styles */
+.profile-head{display:flex;align-items:center;gap:16px;padding:18px;border-bottom:1px solid #f0f0f3}
+.profile-stats{display:flex;gap:12px}

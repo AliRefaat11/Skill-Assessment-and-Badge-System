@@ -1,0 +1,4 @@
+/* Auth page specific styles */
+.auth-wrap{max-width:540px;margin:30px auto;padding:22px;border-radius:12px;background:#fff;border:1px solid #f0f0f3}
+.auth-tabs{display:flex;gap:8px}
+.auth-btn{padding:10px 14px;border-radius:8px}

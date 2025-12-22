@@ -22,5 +22,5 @@ const BadgeSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Badge = mongoose.model('Badge', BadgeSchema);
+const Badge = mongoose.models.Badge || mongoose.model('Badge', BadgeSchema);
 module.exports = Badge;
