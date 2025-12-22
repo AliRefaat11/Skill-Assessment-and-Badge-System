@@ -1,6 +1,6 @@
 const learnerSkillModel = require('../Models/learnerSkillModel');
+const skillModel = require('../Models/skillModel');
 
-// Controller to get all learner skills
 exports.getAllLearnerSkills = async (req, res) => {
   try {
     const learnerSkills = await learnerSkillModel.find();
@@ -10,7 +10,7 @@ exports.getAllLearnerSkills = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      success: false,   
+      success: false,
         message: 'Error fetching learner skills',
         error: error.message
     });
@@ -72,9 +72,12 @@ exports.getAllSkillsByLearner = async (req, res) => {
     try {
         const { learnerID } = req.params;
         const learnerSkills = await learnerSkillModel.find({ learnerID });
+        const skills = await skillModel.find({
+            _id: { $in: learnerSkills.map(ls => ls.skillID) }
+        });
         res.status(200).json({
             success: true,
-            data: learnerSkills
+            data: skills
         });
     } catch (error) {
         res.status(500).json({

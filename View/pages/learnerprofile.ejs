@@ -13,7 +13,6 @@
     remainingQuizzes: 0
   };
   const _badges = (locals && locals.badges) ? locals.badges : [];
-  const _skills = (locals && locals.skills) ? locals.skills : [];
   const _results = (locals && locals.results) ? locals.results : [];
 %>
 
@@ -23,6 +22,8 @@
   location.href = "/api/v1/auth/?tab=login";
 </script>
 <% } %>
+
+<link rel="stylesheet" href="/assets/css/profile.css" />
 
 <div class="min-h-screen px-4 py-8 profile-page">
   <div class="max-w-6xl mx-auto space-y-6">
@@ -154,64 +155,29 @@
 
       <div data-tab-content="badges" data-group="profile-tabs">
         <div
-          class="bg-gradient-card border border-border shadow-card rounded-xl"
-        >
-          <div class="px-6 py-4 border-b border-border/50">
-            <h3 class="text-foreground font-semibold">Your Achievements</h3>
-          </div>
-          <div class="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            <%
-              const badgeCfg = {
-                bronze: {text: 'text-badge-bronze'},
-                silver: {text: 'text-badge-silver'},
-                gold: {text: 'text-badge-gold'},
-                special: {text: 'text-badge-special'}
-              };
-            %>
-            <% if (_badges && _badges.length > 0) { %>
-              <% _badges.forEach(function(b) {
-                const badgeType = b.type || 'bronze';
-                const unlocked = b.unlocked || false;
-                const cfg = badgeCfg[badgeType] || badgeCfg.bronze;
-                const classes = unlocked ? 'hover:scale-105 cursor-pointer' : 'border-border/50 grayscale opacity-60';
-              %>
-              <div class="relative p-6 rounded-xl border-2 transition-all duration-300 bg-card <%= classes %>" style="border-color: <%= unlocked ? 'hsla(var(--' + badgeType + '), 0.4)' : 'hsla(var(--border), 0.5)' %>" data-shadow="<%= unlocked ? '0 0 ' + (badgeType === 'special' ? '30' : '20') + 'px hsla(var(--' + badgeType + '), ' + (badgeType === 'special' ? '0.5' : '0.4') + ')' : 'none' %>">
-                <% if (unlocked) { %>
-                <div class="absolute inset-0 rounded-xl" data-bg="<%= 'hsla(var(--' + badgeType + '), 0.1)' %>"></div>
-                <% } %>
-                <div class="relative flex items-start gap-4">
-                  <div class="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center border-2" data-style="<%= unlocked ? 'border-color: hsla(var(--' + badgeType + '), 0.4); background-color: hsla(var(--' + badgeType + '), 0.2)' : 'background-color: hsla(var(--card), 0.2); border-color: hsla(var(--border), 0.5)' %>">
-                    <i data-lucide="award" class="w-8 h-8 <%= unlocked ? cfg.text : 'text-muted-foreground' %>"></i>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-bold text-lg text-foreground mb-1"><%= b.Name || b.title %></h3>
-                    <p class="text-sm text-muted-foreground leading-relaxed"><%= b.Description || b.desc %></p>
-                    <% if (!unlocked) { %>
-                    <div class="mt-2 text-xs font-medium text-muted-foreground/80 italic">Locked</div>
-                    <% } %>
-                  </div>
-                </div>
-                <% if (unlocked && badgeType === 'special') { %>
-                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent to-transparent animate-shimmer" style="background-size: 200% 100%; background-image: linear-gradient(to right, transparent, hsla(var(--card), 0.1), transparent)"></div>
-                <% } %>
-              </div>
-              <% }); %>
-            <% } else { %>
-              <div class="col-span-full text-center py-8 text-muted-foreground">
-                <i data-lucide="award" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
-                <p>No badges earned yet. Complete quizzes to earn badges!</p>
-              </div>
-            <% } %>
+          id="badges-container"
+          class="bg-gradient-card border border-border shadow-card rounded-xl">
+          <div class="p-6 text-center text-muted-foreground">
+            <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
+            <p>Loading badges...</p>
           </div>
         </div>
       </div>
+      <div class="hidden" data-tab-content="skills" data-group="profile-tabs">
+  <div class="bg-gradient-card border border-border shadow-card rounded-xl">
+    <div class="px-6 py-4 border-b border-border/50">
+      <h3 class="text-foreground font-semibold">Your Skills</h3>
+    </div>
 
-      <div class="p-6 space-y-4" id="skills-container">
-        <div class="text-center py-8 text-muted-foreground">
-          <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
-          <p>Loading skills...</p>
-        </div>
+    <div class="p-6 space-y-4" id="skills-container">
+      <div class="text-center py-8 text-muted-foreground">
+        <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
+        <p>Loading skills...</p>
       </div>
+    </div>
+  </div>
+</div>
+
 
 
       <div class="hidden" data-tab-content="results" data-group="profile-tabs">
@@ -318,7 +284,7 @@
       if (!res.ok) throw new Error('Failed to load skills');
 
       const data = await res.json();
-      const skills = data.data || [];
+      const skills = data.data;
 
       if (!skills.length) {
         container.innerHTML = `
@@ -363,9 +329,99 @@
     }
   }
 
+  
+
   // Hook into tab click
   document.querySelectorAll('[data-tab="skills"]').forEach(btn => {
     btn.addEventListener('click', loadLearnerSkills);
+  });
+
+  let badgesLoaded = false;
+
+  async function loadLearnerBadges() {
+    if (badgesLoaded || !LEARNER_ID) return;
+
+    const container = document.getElementById('badges-container');
+
+    container.innerHTML = `
+      <div class="p-6 text-center text-muted-foreground">
+        <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
+        <p>Loading badges...</p>
+      </div>
+    `;
+
+    try {
+      const res = await fetch(`/api/v1/learnerBadges/learner/${LEARNER_ID}`);
+      if (!res.ok) throw new Error('Failed to load badges');
+
+      const data = await res.json();
+      const badges = data.data;
+
+      if (!badges.length) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-muted-foreground">
+            <i data-lucide="award" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+            <p>No badges earned yet.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const badgeCfg = {
+        bronze: 'text-badge-bronze',
+        silver: 'text-badge-silver',
+        gold: 'text-badge-gold',
+        special: 'text-badge-special'
+      };
+
+      container.innerHTML = `
+        <div class="px-6 py-4 border-b border-border/50">
+          <h3 class="text-foreground font-semibold">Your Achievements</h3>
+        </div>
+        <div class="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          ${badges.map(b => {
+            const type = b.type || 'bronze';
+            const unlocked = b.unlocked;
+            const textClass = badgeCfg[type] || badgeCfg.bronze;
+
+            return `
+              <div class="relative p-6 rounded-xl border-2 ${
+                unlocked ? 'hover:scale-105' : 'grayscale opacity-60'
+              }" style="border-color: hsla(var(--border),0.5)">
+                <div class="flex gap-4">
+                  <div class="w-16 h-16 rounded-xl flex items-center justify-center border">
+                    <i data-lucide="award" class="w-8 h-8 ${
+                      unlocked ? textClass : 'text-muted-foreground'
+                    }"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-foreground">${b.Name}</h3>
+                    <p class="text-sm text-muted-foreground">${b.Description}</p>
+                    ${!unlocked ? '<p class="text-xs italic mt-1">Locked</p>' : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      badgesLoaded = true;
+      lucide.createIcons();
+
+    } catch (err) {
+      container.innerHTML = `
+        <div class="p-6 text-center text-destructive">
+          <p>Failed to load badges.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Hook into badges tab
+  document.querySelectorAll('[data-tab="badges"]').forEach(btn => {
+    btn.addEventListener('click', loadLearnerBadges);
   });
 
   document.addEventListener('DOMContentLoaded', function () {
