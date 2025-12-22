@@ -9,6 +9,7 @@
     <p class="muted">Skill: <%= skill ? (skill.skillName || skill.name) : "Unknown" %></p>
   </div>
   <a class="btnPrimary" href="/admin/skills/<%= skill._id %>/assessments/new">+ Add Assessment</a>
+
 </div>
 
 <div id="alertBox" class="alert" style="display:none;"></div>
@@ -21,6 +22,7 @@
         <th>Total Marks</th>
         <th>Status</th>
         <th>Actions</th>
+
       </tr>
     </thead>
     <tbody id="assessmentsTableBody">

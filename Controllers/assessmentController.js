@@ -86,20 +86,19 @@ exports.updateAssessment = async (req, res, next) => {
 };
 
 // DELETE /api/admin/assessments/:id
-exports.deleteAssessment = async (req, res, next) => {
+exports.deleteAssessment = async (req, res) => {
   try {
-    const assessment = await Assessment.findById(req.params.id);
-    if (!assessment) {
-      return res.status(404).json({ success: false, message: "Assessment not found" });
-    }
+    const { id } = req.params;
 
-    // Delete all questions belonging to this assessment
-    await Question.deleteMany({ assessmentId: assessment._id });
-    await assessment.deleteOne();
+    const assessment = await Assessment.findById(id);
+    if (!assessment) return res.status(404).json({ message: "Assessment not found" });
 
-    res.json({ success: true, message: "Assessment and its questions deleted" });
+    await Question.deleteMany({ assessmentId: id });
+    await Assessment.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Assessment deleted successfully" });
   } catch (err) {
-    next(err);
+    res.status(500).json({ message: err.message });
   }
 };
 
