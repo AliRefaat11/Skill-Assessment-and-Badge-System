@@ -8,7 +8,7 @@ const {
   updateAssessment,
   deleteAssessment,
   getAssessmentsBySkill
-} = require("../controllers/assessmentController");
+} = require("../Controllers/assessmentController");
 
 /*
   IMPORTANT:

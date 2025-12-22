@@ -2,7 +2,6 @@ const Question = require("../Models/questionsModel");
 const Assessment = require("../Models/assesmentModel");
 const Skill = require("../Models/skillModel");
 
-
 exports.createAssessment = async (req, res, next) => {
   try {
     console.log('createAssessment called with body:', req.body);
@@ -49,6 +48,19 @@ exports.getAssessments = async (req, res, next) => {
 };
 
 
+exports.getAssessmentsBySkill = async (req, res, next) => {
+  try {
+    const { skillId } = req.params;
+    const assessmentsBySkill = await Assessment.find({ skillId })
+      .populate("skillId", "name")
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, data: assessmentsBySkill });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getAssessmentById = async (req, res, next) => {
   try {
     const assessment = await Assessment.findById(req.params.id)
@@ -64,7 +76,6 @@ exports.getAssessmentById = async (req, res, next) => {
   }
 };
 
-// PUT /api/admin/assessments/:id
 exports.updateAssessment = async (req, res, next) => {
   try {
     const { durationMins, status, grade } = req.body;
@@ -85,13 +96,12 @@ exports.updateAssessment = async (req, res, next) => {
   }
 };
 
-// DELETE /api/admin/assessments/:id
-exports.deleteAssessment = async (req, res) => {
+exports.deleteAssessment = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const assessment = await Assessment.findById(id);
-    if (!assessment) return res.status(404).json({ message: "Assessment not found" });
+    await Question.deleteMany({ assessmentId: assessment._id });
+    await assessment.deleteOne();
 
     await Question.deleteMany({ assessmentId: id });
     await Assessment.findByIdAndDelete(id);
@@ -102,12 +112,14 @@ exports.deleteAssessment = async (req, res) => {
   }
 };
 
-exports.getAssessmentsBySkill = async (req, res, next) => {
+exports.getAssessmentsBySkill=async (req, res, next) => {
   try {
     const { skillId } = req.params;
-    const assessments = await Assessment.find({ skillId }).sort({ createdAt: -1 });
+    const assessments = await Assessment.find({ skillId })
+      .populate("skillId", "name")
+      .sort({ createdAt: -1 });
     res.json({ success: true, data: assessments });
   } catch (err) {
     next(err);
-  }
+  } 
 };

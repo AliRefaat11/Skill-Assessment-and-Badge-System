@@ -1,0 +1,99 @@
+<section class="container mx-auto px-4 py-12">
+  <h2 class="text-3xl font-bold text-foreground mb-6">Explore Skills</h2>
+
+  <div id="skills-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <!-- Filled by JS -->
+    <div class="text-muted-foreground">Loading skills...</div>
+  </div>
+
+  <!-- Skill Assessments Dialog -->
+  <div
+    id="skill-assessments-dialog"
+    data-dialog
+    class="fixed inset-0 hidden items-center justify-center z-50"
+  >
+    <div class="absolute inset-0 bg-black/60" data-dialog-close></div>
+    <div class="relative w-full max-w-2xl mx-auto bg-card border border-border rounded-2xl shadow-card p-6">
+      <button class="absolute right-3 top-3 text-muted-foreground" data-dialog-close>
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h3 id="skill-dlg-title" class="text-xl font-bold text-foreground mb-2">Skill Assessments</h3>
+      <div id="skill-assessments-list" class="space-y-4 text-sm text-muted-foreground">
+        <!-- Filled by JS -->
+      </div>
+      <div id="no-assessments" class="text-center py-8 hidden">
+        <i data-lucide="info" class="w-8 h-8 mx-auto text-muted-foreground"></i>
+        <p class="mt-2">No assessments available for this skill.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      async function fetchSkills(){
+        try{
+          const res = await fetch('/api/v1/skills');
+          const payload = await res.json();
+          if(!payload.success) throw new Error(payload.error || 'Failed to fetch skills');
+          renderSkills(payload.data || []);
+        }catch(err){
+          document.getElementById('skills-grid').innerHTML = '<div class="text-danger">Failed to load skills</div>';
+          console.error(err);
+        }
+      }
+
+      function renderSkills(skills){
+        const grid = document.getElementById('skills-grid');
+        if(!skills.length){
+          grid.innerHTML = '<div class="text-muted-foreground">No skills available yet.</div>';
+          return;
+        }
+        grid.innerHTML = skills.map(s => (
+          `<div class="p-4 rounded-lg border border-border bg-card/20 cursor-pointer hover:shadow-glow" data-skill-id="${s._id}">
+            <div class="font-semibold text-foreground">${escapeHtml(s.skillName || s.name || 'Untitled')}</div>
+            <div class="text-xs text-muted-foreground mt-2">${escapeHtml(s.description || '')}</div>
+            <div class="text-xs text-muted-foreground mt-3">${s.category || ''}</div>
+          </div>`
+        )).join('');
+
+        grid.querySelectorAll('[data-skill-id]').forEach(el=>{
+          el.addEventListener('click', ()=> openAssessments(el.getAttribute('data-skill-id'), el.querySelector('.font-semibold').textContent));
+        });
+      }
+
+      async function openAssessments(skillId, skillName){
+        const dlg = document.getElementById('skill-assessments-dialog');
+        const listEl = document.getElementById('skill-assessments-list');
+        const noEl = document.getElementById('no-assessments');
+        document.getElementById('skill-dlg-title').textContent = `Assessments — ${skillName}`;
+        listEl.innerHTML = '<div class="text-muted-foreground">Loading…</div>';
+        noEl.classList.add('hidden');
+        dlg.classList.remove('hidden'); dlg.classList.add('flex');
+        try{
+          const res = await fetch(`/api/v1/assessments/skill/${skillId}`);
+          const payload = await res.json();
+          if(!payload.success){ throw new Error(payload.message || 'Failed to fetch assessments'); }
+          const assessments = payload.data || [];
+          if(!assessments.length){ listEl.innerHTML = ''; noEl.classList.remove('hidden'); return; }
+          listEl.innerHTML = assessments.map(a => `
+            <div class="p-3 rounded border border-border bg-white/5">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-foreground">Duration: ${a.duration} mins</div>
+                <div class="text-xs text-muted-foreground">Status: ${a.status}</div>
+              </div>
+              <div class="text-xs text-muted-foreground mt-2">Total Marks: ${a.TotalMarks}</div>
+              <div class="text-xs text-muted-foreground mt-1">Created: ${new Date(a.createdAt).toLocaleString()}</div>
+            </div>
+          `).join('');
+        }catch(err){
+          listEl.innerHTML = '<div class="text-danger">Failed to load assessments</div>';
+          console.error(err);
+        }
+      }
+
+      function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+      fetchSkills();
+    })();
+  </script>
+</section>
