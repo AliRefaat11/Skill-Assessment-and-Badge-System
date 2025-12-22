@@ -98,3 +98,15 @@ exports.deleteAssessment = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getAssessmentsBySkill=async (req, res, next) => {
+  try {
+    const { skillId } = req.params;
+    const assessments = await Assessment.find({ skillId })
+      .populate("skillId", "name")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: assessments });
+  } catch (err) {
+    next(err);
+  } 
+};
