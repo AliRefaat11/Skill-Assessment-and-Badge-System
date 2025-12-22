@@ -54,6 +54,7 @@ exports.renderprofile = async (req, res) => {
   const learner = await Learner.findOne({ UserID: req.user._id });
   res.render('pages/learnerprofile', {
       user: req.user,
-      learner: learner || null
+      learner: learner || null,
+      pageCss: '/assets/css/learnerprofile.css'
   });
 };

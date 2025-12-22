@@ -120,5 +120,5 @@ exports.allowedTo = (...Roles) =>
 });
 
 exports.renderAuth = (req, res) => {
-    res.render('pages/auth', { user: null });
+    res.render('pages/auth', { user: null, pageCss: '/assets/css/auth.css' });
 };

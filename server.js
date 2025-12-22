@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
 dotenv.config({ path: "config.env" });
 
@@ -78,8 +79,32 @@ app.get('/api/admin/stats', async (req, res) => {
 
 app.use(adminRoutes);
 
-app.all("/", (req, res, next) => {
-  next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
+// Attach optional user from cookie (if token present) to res.locals.user
+app.use(async (req, res, next) => {
+  res.locals.user = null;
+  // default public stylesheet (can be overridden by individual renders)
+  res.locals.pageCss = '/assets/css/base.css';
+  try {
+    const token = req.cookies && req.cookies.token;
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const user = await User.findById(decoded.id);
+      res.locals.user = user || null;
+    }
+  } catch (err) {
+    res.locals.user = null;
+  }
+  next();
+});
+
+// Render homepage
+app.use("/", (req, res) => {
+  res.render("index", { user: res.locals.user, pageCss: '/assets/css/home.css' });
+});
+
+// Redirect legacy client-side /auth links to the API auth page
+app.use('/auth', (req, res) => {
+  res.redirect(`/api/v1/auth${req.url}`);
 });
 
 app.use(globalError);

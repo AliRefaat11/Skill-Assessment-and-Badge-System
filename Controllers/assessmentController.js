@@ -48,6 +48,19 @@ exports.getAssessments = async (req, res, next) => {
 };
 
 
+exports.getAssessmentsBySkill = async (req, res, next) => {
+  try {
+    const { skillId } = req.params;
+    const assessmentsBySkill = await Assessment.find({ skillId })
+      .populate("skillId", "name")
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, data: assessmentsBySkill });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getAssessmentById = async (req, res, next) => {
   try {
     const assessment = await Assessment.findById(req.params.id)

@@ -1,3 +1,7 @@
+const Skill = require("../Models/skillModel");
+const Assessment = require("../Models/assesmentModel");
+const Question = require("../Models/questionsModel");
+
 exports.getDashboardPage = (req, res, next) => {
   try {
     res.render("admin/dashboard", {

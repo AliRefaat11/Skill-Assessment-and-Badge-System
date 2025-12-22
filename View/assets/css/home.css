@@ -1,0 +1,11 @@
+/* Home page specific styles */
+.hero-bg{padding-top:56px;padding-bottom:56px}
+.hero-bg h1{line-height:1.02}
+.hero-cta{display:flex;gap:12px;justify-content:center;margin-top:14px}
+
+/* skills grid tweaks */
+#skills-grid > div{min-height:90px}
+#skills-grid .font-semibold{font-weight:700}
+
+/* course cards */
+.bg-gradient-card{border-radius:12px}
