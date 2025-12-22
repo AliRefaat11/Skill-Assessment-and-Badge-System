@@ -1,40 +1,29 @@
-<%- include("partials/header", { title: "Questions", pageCss: "/assets/css/admin/questions.css" }) %>
-<%- include("partials/sidebar", { activeTab }) %>
-
-<div class="crumbs">
-  <a href="/admin/courses">Courses</a>
-  <span>›</span>
-  <a href="/admin/courses/<%= assessment && assessment.courseId ? assessment.courseId._id : '' %>/assessments">Assessments</a>
-  <span>›</span>
-  <span>Questions</span>
-</div>
+<%- include("partials/header", {
+  title: "Create Skill",
+  pageCss: "/assets/css/admin/form-create.css"
+}) %><%- include("partials/sidebar", { activeTab }) %>
 
 <div class="pageHead">
   <div class="titleBlock">
     <h2>Questions</h2>
-    <p class="muted"><%= assessment ? assessment.courseId.name : "" %></p>
+    <p class="muted">Assessment: <%= assessmentId %></p>
   </div>
-
-<button class="btnPrimary" id="btnAddQuestion" data-assessment-id="<%= assessmentId %>">+ Add Question</button>
+  <a class="btnPrimary" href="/admin/assessments/<%= assessmentId %>/questions/new">+ Add Question</a>
 </div>
 
-<% if (error) { %>
-  <div class="errorBox"><%= error %></div>
-<% } %>
+<div id="alertBox" class="alert" style="display:none;"></div>
 
-<div class="tableWrap">
-  <table>
+<div class="tableCard" data-assessment-id="<%= assessmentId %>">
+  <table class="table">
     <thead>
       <tr>
-        <th>Text</th>
-        <th>Type</th>
-        <th>Points</th>
+        <th>Question</th>
+        <th>Correct</th>
         <th>Actions</th>
       </tr>
     </thead>
-
-    <tbody>
-      <!-- Data loaded via JS -->
+    <tbody id="questionsTableBody">
+      <tr><td colspan="3">Loading...</td></tr>
     </tbody>
   </table>
 </div>

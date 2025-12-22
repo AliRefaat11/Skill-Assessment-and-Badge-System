@@ -27,13 +27,16 @@ exports.createAssessment = async (req, res, next) => {
 
 
 
-// GET /api/admin/assessments
 exports.getAssessments = async (req, res, next) => {
   try {
+
+//
     const query = {};
     if (req.query.skillId) {
       query.skillId = req.query.skillId;
     }
+//
+
     const assessments = await Assessment.find(query)
       .populate("skillId", "name")
       .sort({ createdAt: -1 });
@@ -43,6 +46,7 @@ exports.getAssessments = async (req, res, next) => {
     next(err);
   }
 };
+
 
 exports.getAssessmentById = async (req, res, next) => {
   try {

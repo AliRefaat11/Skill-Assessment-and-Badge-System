@@ -1,35 +1,46 @@
-// Load skills
-async function loadSkills() {
-  try {
-    console.log('Fetching skills from API...');
-    const response = await fetch('/api/admin/skills');
-    const data = await response.json();
-    console.log('API response:', data);
-    if (data.success) {
-      renderSkills(data.data);
-    } else {
-      console.error('Failed to load skills');
-    }
-  } catch (error) {
-    console.error('Error loading skills:', error);
+document.addEventListener("DOMContentLoaded", async () => {
+  const tbody = document.getElementById("skillsTableBody");
+  const alertBox = document.getElementById("alertBox");
+
+  function showAlert(msg) {
+    if (!alertBox) return;
+    alertBox.style.display = "block";
+    alertBox.textContent = msg;
   }
-}
 
-function renderSkills(skills) {
-  const container = document.getElementById('skillsList');
-  container.innerHTML = '';
-  skills.forEach(skill => {
-    const skillCard = document.createElement('div');
-    skillCard.className = 'card';
-    skillCard.innerHTML = `
-      <h3>${skill.skillName}</h3>
-      <p>${skill.description}</p>
-      <p><strong>Category:</strong> ${skill.category}</p>
-      <p><strong>Difficulty:</strong> ${skill.difficultyLevel}</p>
-    `;
-    container.appendChild(skillCard);
-  });
-}
+  try {
+    const res = await fetch("/api/v1/skills");
+    const payload = await res.json();
 
-// Load on page load
-document.addEventListener('DOMContentLoaded', loadSkills);
+    if (!res.ok) {
+      tbody.innerHTML = `<tr><td colspan="3">Failed to load skills</td></tr>`;
+      showAlert(payload.message || "Failed to load skills");
+      return;
+    }
+
+    const skills = payload.data || payload.skills || [];
+
+    if (!skills.length) {
+      tbody.innerHTML = `<tr><td colspan="3">No skills yet</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = skills
+      .map(
+        (s) => `
+        <tr>
+          <td>${s.skillName || s.name || ""}</td>
+          <td>${s.category || ""}</td>
+          <td>
+            <a class="btnGhost" href="/admin/skills/${s._id}/assessments">View Assessments</a>
+            <a class="btnPrimary" href="/admin/skills/${s._id}/assessments/new">+ Add Assessment</a>
+          </td>
+        </tr>
+      `
+      )
+      .join("");
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="3">Network error</td></tr>`;
+    showAlert("Network error while loading skills");
+  }
+});

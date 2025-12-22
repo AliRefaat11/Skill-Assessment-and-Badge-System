@@ -113,9 +113,7 @@ exports.deleteQuestion = async (req, res, next) => {
 exports.getQuestionsByAssessment = async (req, res, next) => {
   try {
     const { assessmentId } = req.params;
-
-    const questions = await Question.find({ assessmentId });
-
+    const questions = await Question.find({ assessmentId: assessmentId }).sort({ createdAt: -1 });
     res.json({ success: true, data: questions });
   } catch (err) {
     next(err);
