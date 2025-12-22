@@ -1,6 +1,6 @@
 const learnerSkillModel = require('../Models/learnerSkillModel');
+const skillModel = require('../Models/skillModel');
 
-// Controller to get all learner skills
 exports.getAllLearnerSkills = async (req, res) => {
   try {
     const learnerSkills = await learnerSkillModel.find();
@@ -10,7 +10,7 @@ exports.getAllLearnerSkills = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      success: false,   
+      success: false,
         message: 'Error fetching learner skills',
         error: error.message
     });

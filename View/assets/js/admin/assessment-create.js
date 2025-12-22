@@ -23,12 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const courseId = document.getElementById("courseId").value;
+    const skillId = document.getElementById("skillId").value;
     const durationMins = Number(document.getElementById("durationMins").value);
     const status = document.getElementById("status").value;
     const totalMarks = Number(document.getElementById("totalMarks").value);
 
-    if (!courseId || !durationMins || Number.isNaN(durationMins) || durationMins <= 0) {
+    if (!skillId || !durationMins || Number.isNaN(durationMins) || durationMins <= 0) {
       showAlert("error", "Please enter a valid duration.");
       return;
     }
@@ -40,31 +40,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // IMPORTANT: this must match your backend route mount
-        const res = await fetch("/api/admin/assessments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          courseId,
-          duration: durationMins,
-          status,
-          TotalMarks: totalMarks
-        })
-      });
+       const res = await fetch("/api/v1/assessments", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    skillId,
+    duration: durationMins,
+    status,
+    totalMarks
+  })
+});
 
-      const body = await safeJson(res);
+const body = await safeJson(res);
 
-      if (!res.ok) {
-        const msg = body?.message || "Failed to create assessment.";
-        showAlert("error", msg);
-        return;
-      }
+if (!res.ok) {
+  const msg = body?.message || "Failed to create assessment.";
+  showAlert("error", msg);
+  return;
+}
 
-      showAlert("success", "Assessment created successfully.");
+showAlert("success", "Assessment created successfully.");
 
-      // redirect back to assessments list after 800ms
-      setTimeout(() => {
-        window.location.href = `/admin/courses/${courseId}/assessments`;
-      }, 800);
+setTimeout(() => {
+  window.location.href = `/admin/skills/${skillId}/assessments`;
+}, 800);
+
 
     } catch (err) {
       showAlert("error", "Network error. Check server logs.");

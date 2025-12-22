@@ -1,8 +1,9 @@
-const learnerBagde = require('../models/learnerBadgeModel');
+const learnerBadgeModel = require('../models/learnerBadgeModel');
+const badgeModel = require('../models/badgeModel');
 
 exports.getAllLearnerBadges = async (req, res) => {
     try {
-        const badges = await learnerBagde.find();
+        const badges = await learnerBadgeModel.find();
         res.status(200).json(badges);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -11,7 +12,7 @@ exports.getAllLearnerBadges = async (req, res) => {
 
 exports.getLearnerBadgeById = async (req, res) => {
     try {
-        const badge = await learnerBagde.findById(req.params.id);
+        const badge = await learnerBadgeModel.findById(req.params.id);
         if (!badge) {
             return res.status(404).json({ message: 'Badge not found' });
         }   
@@ -23,7 +24,7 @@ exports.getLearnerBadgeById = async (req, res) => {
 
 exports.createLearnerBadge = async (req, res) => {
     try {
-        const newBadge = new learnerBagde(req.body);
+        const newBadge = new learnerBadgeModel(req.body);
         const savedBadge = await newBadge.save();
         res.status(201).json(savedBadge);
     } catch (error) {
@@ -33,8 +34,13 @@ exports.createLearnerBadge = async (req, res) => {
 
 exports.getAllBadgesByLearner = async (req, res) => {
     try {
-        const badges = await learnerBagde.find({ LearnerID: req.params.learnerId });
-        res.status(200).json(badges);
+        const { learnerId } = req.params;
+        const learnerbadges = await learnerBadgeModel.find({ learnerId });
+        const badges = await badgeModel.find({ _id: { $in: learnerbadges.map(lb => lb.badgeID) } });
+        res.status(200).json({
+            success: true,
+            data: badges
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -42,7 +48,7 @@ exports.getAllBadgesByLearner = async (req, res) => {
 
 exports.getallLearnersByBadge = async (req, res) => {
     try {
-        const learners = await learnerBagde.find({ BadgeID: req.params.badgeId });
+        const learners = await learnerBadge.find({ badgeID: req.params.badgeId });
         res.status(200).json(learners);
     } catch (error) {
         res.status(500).json({ message: error.message });

@@ -98,16 +98,28 @@ exports.updateAssessment = async (req, res, next) => {
 
 exports.deleteAssessment = async (req, res, next) => {
   try {
-    const assessment = await Assessment.findById(req.params.id);
-    if (!assessment) {
-      return res.status(404).json({ success: false, message: "Assessment not found" });
-    }
+    const { id } = req.params;
 
     await Question.deleteMany({ assessmentId: assessment._id });
     await assessment.deleteOne();
 
-    res.json({ success: true, message: "Assessment and its questions deleted" });
+    await Question.deleteMany({ assessmentId: id });
+    await Assessment.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Assessment deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getAssessmentsBySkill=async (req, res, next) => {
+  try {
+    const { skillId } = req.params;
+    const assessments = await Assessment.find({ skillId })
+      .populate("skillId", "name")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: assessments });
   } catch (err) {
     next(err);
-  }
+  } 
 };

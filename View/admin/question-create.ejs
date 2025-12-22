@@ -1,17 +1,66 @@
-<input type="hidden" id="assessmentID" value="<%= assessmentId %>" />
+<%- include("./partials/header", { title: "Create Question", pageCss: "/assets/css/admin/question-create.css" }) %>
+<%- include("./partials/sidebar", { activeTab: "skills" }) %>
 
-<label>Question Text</label>
-<input id="questionText" type="text" required />
+<main class="admin-content">
+  <div id="alertBox" class="alert" style="display:none;"></div>
 
-<label>Question Type</label>
-<select id="type">
-  <option value="mcq">MCQ</option>
-  <option value="true-false">True / False</option>
-  <option value="short">Short Answer</option>
-</select>
+  <div class="admin-page-head">
+    <div>
+      <h2 class="admin-title">Create Question</h2>
+      <p class="admin-subtitle">
+        Assessment ID:
+        <span class="muted"><%= assessmentId %></span>
+      </p>
+    </div>
 
-<label>Points</label>
-<input id="points" type="number" min="1" value="1" required />
+    <div class="admin-actions">
+      <a class="btn btn-secondary" href="/admin/assessments/<%= assessmentId %>/questions">Back</a>
+    </div>
+  </div>
 
-<label>Correct Answer</label>
-<input id="correctAnswer" type="text" required />
+  <section class="card">
+    <form id="createQuestionForm" class="form-grid">
+      <input type="hidden" id="assessmentId" value="<%= assessmentId %>" />
+
+      <div class="form-field full">
+        <label for="questionText">Question Text</label>
+        <input id="questionText" type="text" placeholder="Type the question..." required />
+      </div>
+
+      <div class="form-field">
+        <label for="questionType">Question Type</label>
+        <select id="questionType">
+          <option value="mcq">MCQ</option>
+          <option value="true_false">True or False</option>
+          <option value="text">Text</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="points">Points</label>
+        <input id="points" type="number" min="1" value="1" required />
+      </div>
+
+      <div class="form-field full">
+        <div class="section-head">
+          <h3 class="section-title">Answers</h3>
+          <p class="section-hint" id="answersHint"></p>
+        </div>
+
+        <div id="optionsWrap"></div>
+      </div>
+
+      <div class="form-field full">
+        <label for="correctAnswer">Correct Answer</label>
+        <input id="correctAnswer" type="text" placeholder="Auto for MCQ and True or False" />
+        <p class="helper">For MCQ and True or False, this will be filled automatically.</p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Create Question</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<script src="/assets/js/admin/question-create.js"></script>

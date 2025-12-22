@@ -1,6 +1,7 @@
-const Skill = require("../Models/skillModel");
-const Assessment = require("../Models/assesmentModel");
+const Skill = require('../Models/skillModel');
+const Assessment = require('../Models/assesmentModel');
 const Question = require("../Models/questionsModel");
+
 
 exports.getDashboardPage = (req, res, next) => {
   try {
@@ -27,25 +28,20 @@ exports.getAssessmentsPage = async (req, res, next) => {
     const { skillId } = req.params;
 
     const skill = await Skill.findById(skillId);
-    if (!skill) {
-      return res.status(404).render("admin/assessment", {
-        activeTab: "skills",
-        skill: null,
-        assessments: [],
-        error: "Skill not found"
-      });
-    }
+    if (!skill) return res.status(404).send("Skill not found");
+
+    const assessments = await Assessment.find({ skillId });
 
     res.render("admin/assessment", {
       activeTab: "skills",
       skill,
-      assessments: [], // Data will be loaded via API
-      error: null
+      assessments
     });
   } catch (err) {
     next(err);
   }
 };
+
 
 exports.getQuestionsPage = async (req, res, next) => {
   try {
@@ -67,9 +63,10 @@ exports.getQuestionsPage = async (req, res, next) => {
   activeTab: "skills",
   assessment,
   assessmentId,
-  questions: [], // Data will be loaded via API
+  questions,
   error: null
 });
+
 
   } catch (err) {
     next(err);

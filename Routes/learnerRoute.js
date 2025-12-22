@@ -1,7 +1,6 @@
 const express = require("express");
 const {
     getAllLearners,
-    getLearnerById,
     renderprofile, 
     deleteLearner, 
     getLearnerByUserId,
@@ -15,5 +14,6 @@ router.get("/current", auth, allowedTo("Learner"), getCurrentLearner);
 router.get("/profile", auth, allowedTo("Learner"), renderprofile);
 router.get("/:id", auth, getLearnerByUserId);
 router.delete("/:id", auth, deleteLearner);
+
 
 module.exports = router;

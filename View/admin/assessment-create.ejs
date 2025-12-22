@@ -8,12 +8,12 @@
     <div>
       <h2 class="admin-title">Create Assessment</h2>
       <p class="admin-subtitle">
-        Course: <span class="muted"><%= course ? course.name : "Unknown" %></span>
+Skill: <span class="muted"><%= skill?.skillName || skill?.name || "Unknown" %></span>
       </p>
     </div>
 
     <div class="admin-actions">
-      <a class="btn btn-secondary" href="/admin/courses/<%= courseId %>/assessments">Back</a>
+      <a class="btn btn-secondary" href="/admin/skills/<%= skill?._id %>/assessments">Back</a>
     </div>
   </div>
 
@@ -23,7 +23,7 @@
 
   <section class="card">
     <form id="createAssessmentForm" class="form-grid">
-      <input type="hidden" id="courseId" value="<%= courseId %>" />
+<input type="hidden" id="skillId" value="<%= skill?._id %>" />
 
       <div class="form-field">
         <label for="durationMins">Duration (minutes)</label>
@@ -34,9 +34,6 @@
         <label for="status">Status</label>
         <select id="status">
           <option value="not-started">Not started</option>
-          <option value="in-progress">In progress</option>
-          <option value="submitted">Submitted</option>
-        </select>
       </div>
 
       <div class="form-field">

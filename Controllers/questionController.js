@@ -82,29 +82,18 @@ exports.updateQuestion = async (req, res, next) => {
 
 
 // DELETE /api/admin/questions/:id
-exports.deleteQuestion = async (req, res, next) => {
+exports.deleteQuestion = async (req, res) => {
   try {
-    const question = await Question.findById(req.params.id);
-    if (!question) {
-      return res.status(404).json({ success: false, message: "Question not found" });
-    }
+    const { id } = req.params;
 
-    const assessmentId = question.assessmentId;
+    const q = await Question.findById(id);
+    if (!q) return res.status(404).json({ message: "Question not found" });
 
-    await question.deleteOne();
+    await Question.findByIdAndDelete(id);
 
-    // decrement totalQuestions
-    if (assessmentId) {
-      const assessment = await Assessment.findById(assessmentId);
-      if (assessment && assessment.totalQuestions > 0) {
-        assessment.totalQuestions -= 1;
-        await assessment.save();
-      }
-    }
-
-    res.json({ success: true, message: "Question deleted" });
+    res.status(200).json({ message: "Question deleted successfully" });
   } catch (err) {
-    next(err);
+    res.status(500).json({ message: err.message });
   }
 };
 

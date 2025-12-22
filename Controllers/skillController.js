@@ -1,4 +1,6 @@
 const Skill = require('../Models/skillModel');
+const Assessment = require("../Models/assesmentModel");
+const Question = require("../Models/questionsModel");
 
 exports.createSkill = async (req, res) => {
     try {
@@ -54,12 +56,31 @@ exports.getSkillById = async (req, res) => {
     }
 };
 
+
 exports.deleteSkill = async (req, res) => {
-    try {
-        const deleted = await Skill.findByIdAndDelete(req.params.id);
-        if (!deleted) return res.status(404).json({ error: 'Skill not found' });
-        return res.status(200).json({ message: 'Skill deleted' });
-    } catch (err) {
-        return res.status(500).json({ error: err.message });
+  try {
+    const { id } = req.params;
+
+    const skill = await Skill.findById(id);
+    if (!skill) return res.status(404).json({ message: "Skill not found" });
+
+    // find all assessments under this skill
+    const assessments = await Assessment.find({ skillId: id }).select("_id");
+    const assessmentIds = assessments.map(a => a._id);
+
+    // delete questions under those assessments
+    if (assessmentIds.length) {
+      await Question.deleteMany({ assessmentId: { $in: assessmentIds } });
     }
+
+    // delete assessments
+    await Assessment.deleteMany({ skillId: id });
+
+    // delete skill
+    await Skill.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Skill deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
