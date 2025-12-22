@@ -4,7 +4,8 @@ const assessmentSchema = new mongoose.Schema(
   {
     skillId:{ 
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Skill", required: true 
+      ref: "Skill", 
+      required: true 
     },
     duration:{ 
       type: Number, 

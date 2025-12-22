@@ -10,8 +10,10 @@
     <!-- Lucide icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Custom theme utilities to match original tokens -->
-    <link rel="stylesheet" href="../assets/css/custom.css" />
-  </head>
+<%- include("partials/header", {
+  title: "Create Skill",
+  pageCss: "/assets/css/admin/form-create.css"
+}) %>  </head>
   <body class="min-h-screen bg-background text-foreground">
     <%- include('nav') %>
     <script>

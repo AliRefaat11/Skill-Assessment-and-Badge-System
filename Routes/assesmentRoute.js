@@ -1,19 +1,30 @@
-const express = require('express');
+const express = require("express");
+const router = express.Router();
+
 const {
   createAssessment,
   getAssessments,
   getAssessmentById,
   updateAssessment,
-  deleteAssessment
-} = require('../controllers/assessmentController');
+  deleteAssessment,
+  getAssessmentsBySkill
+} = require("../controllers/assessmentController");
 
-const router = express.Router();
+/*
+  IMPORTANT:
+  Specific routes must come before "/:id"
+*/
 
-router.route('/')
+// ✅ Get assessments by skill
+router.get("/skill/:skillId", getAssessmentsBySkill);
+
+// Collection routes
+router.route("/")
   .post(createAssessment)
   .get(getAssessments);
 
-router.route('/:id')
+// Single assessment routes
+router.route("/:id")
   .get(getAssessmentById)
   .put(updateAssessment)
   .delete(deleteAssessment);
