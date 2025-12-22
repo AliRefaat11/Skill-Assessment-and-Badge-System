@@ -12,7 +12,6 @@
     completionPercent: 0,
     remainingQuizzes: 0
   };
-  const _badges = (locals && locals.badges) ? locals.badges : [];
   const _results = (locals && locals.results) ? locals.results : [];
 %>
 
@@ -171,20 +170,10 @@
       <h3 class="text-foreground font-semibold">Your Skills</h3>
     </div>
 
-      <div class="hidden" data-tab-content="skills" data-group="profile-tabs">
-        <div
-          class="bg-gradient-card border border-border shadow-card rounded-xl"
-        >
-          <div class="px-6 py-4 border-b border-border/50">
-            <h3 class="text-foreground font-semibold">Your Skills</h3>
-          </div>
-          <div class="p-6 space-y-4" id="skills-container">
-            <div class="text-center py-8 text-muted-foreground">
-              <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
-              <p>Loading skills...</p>
-            </div>
-          </div>
-        </div>
+    <div class="p-6 space-y-4" id="skills-container">
+      <div class="text-center py-8 text-muted-foreground">
+        <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
+        <p>Loading skills...</p>
       </div>
     </div>
   </div>
@@ -276,25 +265,12 @@
 </div>
 
 <script>
-  const LEARNER_ID = "<%= learner ? learner._id : '' %>";
+  const LEARNER_ID = "<%= learner ? learner.id : '' %>";
 
   let skillsLoaded = false;
 
   async function loadLearnerSkills() {
-    if (!LEARNER_ID) {
-      const container = document.getElementById('skills-container');
-      container.innerHTML = `
-        <div class="text-center py-8 text-muted-foreground">
-          <i data-lucide="alert-circle" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
-          <p>Learner profile not found.</p>
-        </div>
-      `;
-      if (window.lucide && lucide.createIcons) lucide.createIcons();
-      return;
-    }
-    
-    // Reset the flag to allow reloading
-    skillsLoaded = false;
+    if (skillsLoaded || !LEARNER_ID) return;
 
     const container = document.getElementById('skills-container');
     container.innerHTML = `
@@ -323,28 +299,17 @@
       }
 
       const skillColors = ['bg-primary', 'bg-secondary', 'bg-accent', 'bg-success', 'bg-warning'];
-      const categoryLevels = { Beginner: 33, Intermediate: 66, Advanced: 100 };
-      
-      function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
+      const categoryLevels = { Beginner: 33, Intermediate: 66, Expert: 100 };
 
       container.innerHTML = skills.map((s, index) => {
         const barColor = skillColors[index % skillColors.length];
-        // Use difficultyLevel if category is not available
-        const difficulty = s.difficultyLevel || s.category || 'Beginner';
-        const percent = categoryLevels[difficulty] || 33;
-        const skillName = s.skillName || s.name || 'Unknown Skill';
-        const category = s.category || s.difficultyLevel || 'Beginner';
+        const percent = categoryLevels[s.category] || 33;
 
         return `
           <div class="space-y-2">
             <div class="flex justify-between text-sm">
-              <span class="text-foreground font-medium">${escapeHtml(skillName)}</span>
-              <span class="text-muted-foreground">${escapeHtml(category)}</span>
+              <span class="text-foreground font-medium">${s.skillName}</span>
+              <span class="text-muted-foreground">${s.category}</span>
             </div>
             <div class="h-2 rounded-full overflow-hidden" style="background-color: hsla(var(--card), 0.2)">
               <div class="h-full ${barColor}" style="width: ${percent}%"></div>
@@ -369,24 +334,7 @@
 
   // Hook into tab click
   document.querySelectorAll('[data-tab="skills"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      loadLearnerSkills();
-    });
-  });
-  
-  // Also load skills when skills tab is shown via tab switching
-  document.addEventListener('DOMContentLoaded', function() {
-    const observer = new MutationObserver(function(mutations) {
-      const skillsTab = document.querySelector('[data-tab-content="skills"][data-group="profile-tabs"]');
-      if (skillsTab && !skillsTab.classList.contains('hidden')) {
-        loadLearnerSkills();
-      }
-    });
-    
-    const skillsTabContent = document.querySelector('[data-tab-content="skills"][data-group="profile-tabs"]');
-    if (skillsTabContent) {
-      observer.observe(skillsTabContent, { attributes: true, attributeFilter: ['class'] });
-    }
+    btn.addEventListener('click', loadLearnerSkills);
   });
 
   let badgesLoaded = false;
@@ -520,12 +468,6 @@
         );
         if (activeContent) {
           activeContent.classList.remove('hidden');
-          
-          // If skills tab is clicked, reload skills
-          if (target === 'skills') {
-            skillsLoaded = false;
-            loadLearnerSkills();
-          }
         }
       });
     });
