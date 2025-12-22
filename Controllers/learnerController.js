@@ -50,6 +50,22 @@ exports.deleteLearner = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", message: "Learner deleted successfully" });
 });
 
+exports.getCurrentLearner = asyncHandler(async (req, res, next) => {
+  let learner = await Learner.findOne({ UserID: req.user._id });
+  if (!learner) {
+    // Auto-create learner record if user has Learner role but no learner record exists
+    if (req.user.Role === "Learner") {
+      learner = await Learner.create({
+        UserID: req.user._id,
+        Level: "Beginner"
+      });
+    } else {
+      return next(new ApiError("Learner not found", 404));
+    }
+  }
+  res.status(200).json({ status: "success", data: learner });
+});
+
 exports.renderprofile = async (req, res) => {
   const learner = await Learner.findOne({ UserID: req.user._id });
   res.render('pages/learnerprofile', {

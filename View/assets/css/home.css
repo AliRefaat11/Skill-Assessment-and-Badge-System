@@ -1,11 +1,33 @@
 /* Home page specific styles */
-.hero-bg{padding-top:56px;padding-bottom:56px}
+.hero-bg{padding-top:56px;padding-bottom:56px; position:relative; overflow:hidden; --mx:50% ; --my:50%;}
 .hero-bg h1{line-height:1.02}
 .hero-cta{display:flex;gap:12px;justify-content:center;margin-top:14px}
 
-/* skills grid tweaks */
-#skills-grid > div{min-height:90px}
-#skills-grid .font-semibold{font-weight:700}
+/* interactive gradient effect (follows cursor) */
+.hero-bg{
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgba(124,58,237,0.12) 0%, rgba(124,58,237,0.06) 8%, transparent 25%),
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  transition: background 120ms linear;
+}
+.hero-bg.hovering{filter:brightness(1.02) saturate(1.05);}
+
+/* particle tails */
+#skills-grid{margin-top:12px}
+.skill-card{min-height:140px;padding:20px;border-radius:12px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .18s ease, box-shadow .18s ease}
+.skill-card:hover{transform:translateY(-6px);box-shadow:0 12px 26px rgba(2,6,23,0.6)}
+.skill-card .font-semibold{font-size:1.02rem}
+.skill-card .text-sm{opacity:0.95}
+
+/* search input */
+#skill-search.input{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);padding:12px 14px;border-radius:10px;color:var(--foreground)}
+
+.hero-particle{position:absolute;pointer-events:none;border-radius:999px;width:10px;height:10px;transform:translate(-50%,-50%) scale(1);opacity:1;will-change:transform,opacity;background:linear-gradient(180deg,#fff,rgba(255,255,255,0.2));box-shadow:0 6px 14px rgba(0,0,0,0.25)}
+@keyframes hero-tail {
+  0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{transform:translate(calc(-50% + 10px),calc(-50% - 24px)) scale(0.3);opacity:0}
+}
+.hero-particle.animate{animation: hero-tail 500ms cubic-bezier(.2,.9,.1,1) forwards}
 
 /* course cards */
 .bg-gradient-card{border-radius:12px}
