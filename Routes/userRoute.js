@@ -5,9 +5,12 @@ const {
     deleteUser, 
     getUsersByRole, 
     getUsersById,
-    getAllUsers} = require("../Controllers/userController");
+    getAllUsers} 
+    = require("../Controllers/userController");
 
+    
 const router = express.Router();
+
 
 router.get("/", getAllUsers);
 router.post("/", createUser);
