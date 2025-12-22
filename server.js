@@ -33,6 +33,7 @@ const learnerBadgeRoute = require('./Routes/learnerBadgeRoute');
 const learnerSkillRoute = require('./Routes/learnerSkillRoute');
 const adminRoutes = require("./Routes/adminRoutes");
 
+
 dbconnection();
 
 app.use("/api/v1/user", userRoute);
@@ -49,6 +50,8 @@ app.use('/api/admin/skills', skillRoute);
 app.use('/api/admin/assessments', assesmentRoute);
 app.use('/api/admin/questions', questionRoute);
 app.use('/api/admin/users', userRoute);
+app.use("/admin", require("./Routes/dashboardRoutes"));
+
 
 // Admin API routes
 const { auth, allowedTo } = require('./Services/authService');
