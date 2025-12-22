@@ -1,4 +1,3 @@
-// ...existing code...
 const Skill = require('../Models/skillModel');
 
 exports.createSkill = async (req, res) => {
