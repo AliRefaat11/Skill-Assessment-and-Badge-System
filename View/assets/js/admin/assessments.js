@@ -1,47 +1,55 @@
-// Load assessments for the skill
-async function loadAssessments() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const skillId = window.location.pathname.split('/')[3]; // /admin/skills/:skillId/assessments
+document.addEventListener("DOMContentLoaded", async () => {
+  const tableCard = document.querySelector(".tableCard[data-skill-id]");
+  const tbody = document.getElementById("assessmentsTableBody");
+  const alertBox = document.getElementById("alertBox");
+
+  const skillId = tableCard ? tableCard.getAttribute("data-skill-id") : null;
+
+  function showAlert(msg) {
+    if (!alertBox) return;
+    alertBox.style.display = "block";
+    alertBox.textContent = msg;
+  }
+
+  if (!skillId) {
+    tbody.innerHTML = `<tr><td colspan="4">Missing skillId</td></tr>`;
+    return;
+  }
 
   try {
-    const response = await fetch(`/api/admin/assessments?skillId=${skillId}`);
-    const data = await response.json();
-    if (data.success) {
-      renderAssessments(data.data);
-    } else {
-      console.error('Failed to load assessments');
+    const res = await fetch(`/api/v1/assessments/skill/${skillId}`);
+    const payload = await res.json();
+
+    if (!res.ok) {
+      tbody.innerHTML = `<tr><td colspan="4">Failed to load assessments</td></tr>`;
+      showAlert(payload.message || "Failed to load assessments");
+      return;
     }
-  } catch (error) {
-    console.error('Error loading assessments:', error);
+
+    const assessments = payload.data || payload.assessments || [];
+
+    if (!assessments.length) {
+      tbody.innerHTML = `<tr><td colspan="4">No assessments yet</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = assessments
+      .map(
+        (a) => `
+        <tr>
+          <td>${a.duration ?? ""}</td>
+          <td>${a.TotalMarks ?? a.totalMarks ?? ""}</td>
+          <td>${a.status ?? ""}</td>
+          <td>
+            <a class="btnGhost" href="/admin/assessments/${a._id}/questions">View Questions</a>
+            <a class="btnPrimary" href="/admin/assessments/${a._id}/questions/new">+ Add Question</a>
+          </td>
+        </tr>
+      `
+      )
+      .join("");
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="4">Network error</td></tr>`;
+    showAlert("Network error while loading assessments");
   }
-}
-
-function renderAssessments(assessments) {
-  const tbody = document.querySelector('tbody');
-  tbody.innerHTML = '';
-  assessments.forEach(a => {
-    const row = `
-      <tr>
-        <td><span class="pill">${a.status}</span></td>
-        <td>${a.duration} mins</td>
-        <td>${a.totalQuestions}</td>
-        <td>${a.grade || '-'}</td>
-        <td class="rowActions">
-          <a class="btnGhost" href="/admin/assessments/${a._id}/questions">Questions</a>
-          <button class="btnIcon">✎</button>
-          <button class="btnDanger">🗑</button>
-        </td>
-      </tr>
-    `;
-    tbody.innerHTML += row;
-  });
-}
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
-// Load on page load
-document.addEventListener('DOMContentLoaded', loadAssessments);
+});

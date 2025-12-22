@@ -1,16 +1,31 @@
-<%- include("partials/header", { title: "Skills", pageCss: "/assets/css/admin/skills.css" }) %>
-<%- include("partials/sidebar", { activeTab }) %>
+<%- include("partials/header", {
+  title: "Create Skill",
+  pageCss: "/assets/css/admin/form-create.css"
+}) %><%- include("partials/sidebar", { activeTab }) %>
 
 <div class="pageHead">
-  <div class="searchBox">
-    <input id="searchSkills" type="text" placeholder="Search skills..." />
+  <div class="titleBlock">
+    <h2>Skills</h2>
+    <p class="muted">Manage skills</p>
   </div>
-
-  <button class="btnPrimary" id="btnAddSkill">+ Add Skill</button>
+  <a class="btnPrimary" href="/admin/skills/new">+ Add Skill</a>
 </div>
 
-<div class="cardList" id="skillsList">
-  <!-- Data loaded via JS -->
+<div id="alertBox" class="alert" style="display:none;"></div>
+
+<div class="tableCard">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Skill Name</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="skillsTableBody">
+      <tr><td colspan="3">Loading...</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <%- include("partials/footer", { pageJs: "/assets/js/admin/skills.js" }) %>

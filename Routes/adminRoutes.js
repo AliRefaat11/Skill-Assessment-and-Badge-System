@@ -8,9 +8,10 @@ router.get("/admin/dashboard", adminDashboardController.getDashboardPage);
 
 // Pages
 router.get("/admin/skills", adminDashboardController.getSkillsPage);
-
 // IMPORTANT: put /new before any :id (if you later add /admin/skills/:id page)
 router.get("/admin/skills/new", adminDashboardController.getCreateSkillPage);
+
+
 
 // nested navigation pages
 router.get("/admin/skills/:skillId/assessments", adminDashboardController.getAssessmentsPage);
@@ -20,6 +21,7 @@ router.get("/admin/assessments/:assessmentId/questions", adminDashboardControlle
 router.get("/admin/assessments/:assessmentId/questions/new", adminDashboardController.getCreateQuestionPage);
 
 router.get("/admin/users", adminDashboardController.getUsersPage);
+
 router.get("/admin/instructors", adminDashboardController.getInstructorsPage);
 
 module.exports = router;
