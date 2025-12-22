@@ -98,17 +98,17 @@ exports.updateAssessment = async (req, res, next) => {
 
 exports.deleteAssessment = async (req, res, next) => {
   try {
-    const assessment = await Assessment.findById(req.params.id);
-    if (!assessment) {
-      return res.status(404).json({ success: false, message: "Assessment not found" });
-    }
+    const { id } = req.params;
 
     await Question.deleteMany({ assessmentId: assessment._id });
     await assessment.deleteOne();
 
-    res.json({ success: true, message: "Assessment and its questions deleted" });
+    await Question.deleteMany({ assessmentId: id });
+    await Assessment.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Assessment deleted successfully" });
   } catch (err) {
-    next(err);
+    res.status(500).json({ message: err.message });
   }
 };
 
