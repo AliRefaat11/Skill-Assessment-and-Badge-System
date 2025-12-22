@@ -1,0 +1,211 @@
+/* profile.css  (matches the dark Rankify-style UI in your screenshot) */
+
+/* Page base */
+.profile-page{
+  background: radial-gradient(900px 500px at 20% 0%, rgba(156,92,255,0.14), rgba(0,0,0,0) 60%),
+              radial-gradient(900px 500px at 80% 10%, rgba(120,70,255,0.10), rgba(0,0,0,0) 55%),
+              linear-gradient(180deg, #07070a 0%, #050508 100%);
+  color: #e9e9f2;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+/* Layout */
+.profile-page .max-w-6xl{
+  max-width: 1120px;
+}
+
+/* Top header */
+.profile-page h1{
+  letter-spacing: 0.2px;
+}
+.profile-page p{
+  color: rgba(233,233,242,0.66);
+}
+
+/* Buttons (Logout + tabs) */
+.profile-page a[href*="logout"],
+.profile-page button[data-group="profile-tabs"]{
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(233,233,242,0.88);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.profile-page a[href*="logout"]:hover,
+.profile-page button[data-group="profile-tabs"]:hover{
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(156,92,255,0.35);
+  box-shadow: 0 0 0 1px rgba(156,92,255,0.18), 0 10px 28px rgba(0,0,0,0.55);
+  transform: translateY(-1px);
+}
+
+.profile-page a[href*="logout"]{
+  border-radius: 10px;
+}
+
+/* Cards */
+.bg-gradient-card{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+    radial-gradient(600px 240px at 20% 0%, rgba(156,92,255,0.12), rgba(0,0,0,0) 60%),
+    rgba(12,12,16,0.92);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  box-shadow:
+    0 14px 40px rgba(0,0,0,0.60),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+
+.shadow-card{
+  box-shadow:
+    0 14px 40px rgba(0,0,0,0.60),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* Card headers */
+.bg-gradient-card > .px-6.py-4{
+  background: rgba(255,255,255,0.01);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.profile-page .text-muted-foreground{
+  color: rgba(233,233,242,0.62);
+}
+.profile-page .text-foreground{
+  color: rgba(233,233,242,0.92);
+}
+.profile-page .border-border{
+  border-color: rgba(255,255,255,0.10);
+}
+
+/* Progress bars */
+.profile-page .h-2.rounded{
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.profile-page .bg-primary{
+  background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%);
+}
+.profile-page .bg-secondary{
+  background: linear-gradient(90deg, #7c3aed 0%, #c026d3 100%);
+}
+
+/* Colors for numbers (streak + completion) */
+.profile-page .text-warning{
+  color: #f59e0b;
+}
+.profile-page .text-success{
+  color: #22c55e;
+}
+.profile-page .text-destructive{
+  color: #ef4444;
+}
+
+/* Tabs row */
+.profile-page .grid.grid-cols-4.max-w-lg{
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* Make the active tab look like the screenshot (filled card) */
+.profile-page button[data-group="profile-tabs"].bg-card{
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+  border-radius: 10px;
+}
+
+/* Inactive tabs */
+.profile-page button[data-group="profile-tabs"].text-muted-foreground{
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: rgba(233,233,242,0.58);
+}
+.profile-page button[data-group="profile-tabs"].text-muted-foreground:hover{
+  border-color: rgba(255,255,255,0.10);
+}
+
+/* Achievements grid items */
+.profile-page [data-tab-content="badges"] .p-6.rounded-xl.border-2{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+    rgba(10,10,14,0.65);
+  border-radius: 14px;
+}
+
+/* Badge icon box */
+.profile-page [data-tab-content="badges"] .w-16.h-16.rounded-xl{
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Unlocked hover effect (smooth glow like screenshot) */
+.profile-page [data-tab-content="badges"] .hover\:scale-105:hover{
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 0 1px rgba(156,92,255,0.18), 0 18px 48px rgba(0,0,0,0.70);
+}
+
+/* Locked badges */
+.profile-page [data-tab-content="badges"] .grayscale{
+  filter: grayscale(1);
+}
+.profile-page [data-tab-content="badges"] .opacity-60{
+  opacity: 0.62;
+}
+
+/* Badge text colors */
+.profile-page .text-badge-bronze{ color: #d6a25a; }
+.profile-page .text-badge-silver{ color: #cbd5e1; }
+.profile-page .text-badge-gold{ color: #fbbf24; }
+.profile-page .text-badge-special{ color: #a855f7; }
+
+/* Inputs for Edit Profile tab (so it matches the theme too) */
+.profile-page .input{
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(233,233,242,0.90);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.profile-page .input:focus{
+  border-color: rgba(156,92,255,0.55);
+  box-shadow: 0 0 0 3px rgba(156,92,255,0.18);
+  background: rgba(255,255,255,0.04);
+}
+
+.profile-page .btn-primary{
+  background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: #0b0b10;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.65);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+.profile-page .btn-primary:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.72);
+}
+
+/* Small polishing: icons alignment */
+.profile-page i[data-lucide]{
+  vertical-align: middle;
+}
+
+/* Responsive spacing like screenshot */
+@media (max-width: 768px){
+  .profile-page .grid.gap-4.md\:grid-cols-3{
+    gap: 14px;
+  }
+  .profile-page .grid.grid-cols-4.max-w-lg{
+    max-width: 100%;
+  }
+}

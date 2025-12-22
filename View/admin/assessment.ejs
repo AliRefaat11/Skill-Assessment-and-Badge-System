@@ -8,12 +8,12 @@
     <h2>Assessments</h2>
     <p class="muted">Skill: <%= skill ? (skill.skillName || skill.name) : "Unknown" %></p>
   </div>
-  <a class="btnPrimary" href="/admin/skills/<%= skillId %>/assessments/new">+ Add Assessment</a>
+  <a class="btnPrimary" href="/admin/skills/<%= skill._id %>/assessments/new">+ Add Assessment</a>
 </div>
 
 <div id="alertBox" class="alert" style="display:none;"></div>
 
-<div class="tableCard" data-skill-id="<%= skillId %>">
+<div class="tableCard" data-skill-id="<%= skill._id %>">
   <table class="table">
     <thead>
       <tr>

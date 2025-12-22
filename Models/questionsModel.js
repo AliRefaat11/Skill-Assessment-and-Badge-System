@@ -24,7 +24,12 @@ const questionSchema = new mongoose.Schema(
     correctAnswer: { 
       type: String, 
       required: true 
-    }
+    },
+    // For MCQ type questions
+    options: {
+    type: [String],
+    default: []
+  }
   },
   { timestamps: true }
 );
