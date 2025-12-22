@@ -2,7 +2,6 @@ const Question = require("../Models/questionsModel");
 const Assessment = require("../Models/assesmentModel");
 const Skill = require("../Models/skillModel");
 
-
 exports.createAssessment = async (req, res, next) => {
   try {
     console.log('createAssessment called with body:', req.body);
@@ -64,7 +63,6 @@ exports.getAssessmentById = async (req, res, next) => {
   }
 };
 
-// PUT /api/admin/assessments/:id
 exports.updateAssessment = async (req, res, next) => {
   try {
     const { durationMins, status, grade } = req.body;
@@ -85,7 +83,6 @@ exports.updateAssessment = async (req, res, next) => {
   }
 };
 
-// DELETE /api/admin/assessments/:id
 exports.deleteAssessment = async (req, res, next) => {
   try {
     const assessment = await Assessment.findById(req.params.id);
@@ -93,21 +90,10 @@ exports.deleteAssessment = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "Assessment not found" });
     }
 
-    // Delete all questions belonging to this assessment
     await Question.deleteMany({ assessmentId: assessment._id });
     await assessment.deleteOne();
 
     res.json({ success: true, message: "Assessment and its questions deleted" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getAssessmentsBySkill = async (req, res, next) => {
-  try {
-    const { skillId } = req.params;
-    const assessments = await Assessment.find({ skillId }).sort({ createdAt: -1 });
-    res.json({ success: true, data: assessments });
   } catch (err) {
     next(err);
   }
