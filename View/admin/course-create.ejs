@@ -1,0 +1,60 @@
+<%- include("partials/header", { title: "Create Course", pageCss: "/assets/css/admin/form-create.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="crumbs">
+  <a href="/admin/courses">Courses</a>
+  <span>›</span>
+  <span>Create Course</span>
+</div>
+
+<div class="pageHead">
+  <div class="titleBlock">
+    <h2>Create Course</h2>
+    <p class="muted">Add a new course to the system</p>
+  </div>
+</div>
+
+<div id="alertBox" class="alert" style="display:none;"></div>
+
+<form id="createCourseForm" class="formCard">
+  <label>Course Name</label>
+  <input id="name" type="text" placeholder="e.g. Java Basics" required />
+
+  <label>Skill</label>
+ <select id="skillID" required>
+  <option value="">Select skill</option>
+  <% skills.forEach(s => { %>
+    <option value="<%= s._id %>"><%= s.name %></option>
+  <% }) %>
+</select>
+
+
+  <label>Instructor</label>
+  <select id="instructorID" required>
+    <option value="">Select instructor</option>
+    <% instructors.forEach(i => { %>
+      <option value="<%= i._id %>"><%= i.name || i.email || i._id %></option>
+    <% }) %>
+  </select>
+
+  <label>Difficulty Level</label>
+  <select id="difficultyLevel" required>
+    <option value="">Select level</option>
+    <option value="Beginner">Beginner</option>
+    <option value="Intermediate">Intermediate</option>
+    <option value="Advanced">Advanced</option>
+  </select>
+
+  <label>Duration</label>
+  <input id="duration" type="number" min="1" placeholder="e.g. 10" required />
+
+  <label>Price</label>
+  <input id="price" type="number" min="0" placeholder="e.g. 500" required />
+
+  <div class="formActions">
+    <a class="btnGhost" href="/admin/courses">Cancel</a>
+    <button class="btnPrimary" type="submit">Create Course</button>
+  </div>
+</form>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/course-create.js" }) %>

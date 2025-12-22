@@ -66,14 +66,12 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  // Clear the token cookie
   res.cookie('token', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    expires: new Date(0) // Set expiration to past date to delete cookie
+    expires: new Date(0)
   });
   
-  // Redirect to auth page
   res.redirect('/api/v1/auth');
 }; 
 
@@ -122,5 +120,5 @@ exports.allowedTo = (...Roles) =>
 });
 
 exports.renderAuth = (req, res) => {
-    res.render('pages/auth', { user: null });
+    res.render('pages/auth', { user: null, pageCss: '/assets/css/auth.css' });
 };

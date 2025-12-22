@@ -6,10 +6,14 @@
     </h3>
   </div>
   <div class="p-4 space-y-3">
-    <% const leaders = [ {rank:1, name:'Alex Johnson', xp:12450, avatar:'AJ'},
-    {rank:2, name:'Sarah Chen', xp:11280, avatar:'SC'}, {rank:3, name:'Mike
-    Rodriguez', xp:10950, avatar:'MR'}, {rank:4, name:'Emma Davis', xp:9870,
-    avatar:'ED'}, {rank:5, name:'James Wilson', xp:8920, avatar:'JW'}, ];
+    <% 
+    const leaders = [
+      { rank: 1, name: 'Alex Johnson', xp: 12450, avatar: 'AJ' },
+      { rank: 2, name: 'Sarah Chen', xp: 11280, avatar: 'SC' },
+      { rank: 3, name: 'Mike Rodriguez', xp: 10950, avatar: 'MR' },
+      { rank: 4, name: 'Emma Davis', xp: 9870, avatar: 'ED' },
+      { rank: 5, name: 'James Wilson', xp: 8920, avatar: 'JW' }
+    ];
     leaders.forEach(function(entry){ %>
     <div
       class="flex items-center gap-4 p-3 rounded-lg bg-background/50 hover:bg-background/70 transition-colors"

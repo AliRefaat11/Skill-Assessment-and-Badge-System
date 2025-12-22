@@ -48,18 +48,16 @@
       </div>
 
       <form
-        method="post"
-        action="/api/v1/auth/login"
         class="space-y-4"
         data-tab-content="login"
         data-group="auth"
       >
         <div class="space-y-2">
-          <label class="text-foreground text-sm" for="email">Email</label>
+          <label class="text-foreground text-sm" for="Email">Email</label>
           <input
-            id="email"
+            id="Email"
             name="Email"
-            type="email"
+            type="Email"
             placeholder="you@example.com"
             class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
             required
@@ -87,8 +85,6 @@
       </form>
 
       <form
-        method="post"
-        action="/api/v1/auth/signup"
         class="space-y-4 hidden"
         data-tab-content="signup"
         data-group="auth"
@@ -215,18 +211,6 @@
             <option value="Other">Other</option>
           </select>
 
-        <div class="space-y-2">
-          <label class="text-foreground text-sm" for="skillId">Field of Interest</label>
-          <select
-            id="skillId"
-            name="skillId"
-            class="w-full bg-background/50 border border-border rounded-md px-3 py-2 input"
-            required
-          >
-            <option value="">Loading skills...</option>
-          </select>
-        </div>
-
         <button
           type="submit"
           class="w-full bg-primary hover:opacity-90 text-white rounded-md px-4 py-2 shadow-glow"
@@ -246,58 +230,6 @@
   (function () {
     const tabs = document.querySelectorAll('[data-tab][data-group="auth"]');
     const contents = document.querySelectorAll('[data-tab-content][data-group="auth"]');
-
-    // Fetch skills from database and populate dropdown
-    async function loadSkills() {
-      const skillSelect = document.getElementById('skillId');
-      try {
-        const res = await fetch('/api/v1/skill');
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const skills = await res.json();
-        
-        skillSelect.innerHTML = '<option value="">Select a Skill</option>';
-        
-        // Handle both array and { data: array } formats
-        const skillsArray = Array.isArray(skills) ? skills : (skills.data || []);
-        
-        if (skillsArray.length > 0) {
-          // Group skills by category
-          const skillsByCategory = {};
-          skillsArray.forEach(skill => {
-            if (!skillsByCategory[skill.category]) {
-              skillsByCategory[skill.category] = [];
-            }
-            skillsByCategory[skill.category].push(skill);
-          });
-          
-          // Create optgroups for each category
-          Object.keys(skillsByCategory).sort().forEach(category => {
-            const optgroup = document.createElement('optgroup');
-            optgroup.label = category;
-            
-            skillsByCategory[category].forEach(skill => {
-              const option = document.createElement('option');
-              option.value = skill._id;
-              option.textContent = skill.skillName;
-              optgroup.appendChild(option);
-            });
-            
-            skillSelect.appendChild(optgroup);
-          });
-        } else {
-          skillSelect.innerHTML = '<option value="">No skills available</option>';
-        }
-      } catch (err) {
-        console.error('Failed to load skills:', err);
-        console.error('Error details:', err.message);
-        skillSelect.innerHTML = '<option value="">Failed to load skills. Please refresh the page.</option>';
-      }
-    }
-    
-    // Load skills when page loads
-    loadSkills();
 
     function openTab(name) {
       // Update tab styles (only for login/signup)
@@ -358,7 +290,7 @@
           } else if (result.role === 'Instructor') {
             window.location.href = '/api/v1/instructor/profile';
           } else if (result.role === 'Admin') {
-            window.location.href = '/api/v1/admin';
+            window.location.href = '/admin/dashboard';
           } else {
             window.location.href = '/';
           }

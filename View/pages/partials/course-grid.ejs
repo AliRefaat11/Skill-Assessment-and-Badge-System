@@ -1,15 +1,14 @@
-<% const courses = [ {id: '1', title: 'JavaScript Fundamentals', category:
-'Programming', description: 'Learn the basics of JavaScript programming',
-quizCount: 0, estimatedTime: '2 hours', difficulty: 'beginner'}, {id: '2',
-title: 'React Advanced Patterns', category: 'Programming', description: 'Master
-advanced React concepts and patterns', quizCount: 0, estimatedTime: '4 hours',
-difficulty: 'advanced'}, {id: '3', title: 'Data Structures & Algorithms',
-category: 'Computer Science', description: 'Essential DSA concepts for
-interviews', quizCount: 0, estimatedTime: '6 hours', difficulty:
-'intermediate'}, {id: '4', title: 'UI/UX Design Principles', category: 'Design',
-description: 'Learn fundamental design principles', quizCount: 0, estimatedTime:
-'3 hours', difficulty: 'beginner'}, ]; const categories =
-['All','Programming','Computer Science','Design']; %>
+<!-- encoding: UTF-8 -->
+<% 
+const courses = [
+  { id: '1', title: 'JavaScript Fundamentals', category: 'Programming', description: 'Learn the basics of JavaScript programming', quizCount: 0, estimatedTime: '2 hours', difficulty: 'beginner' },
+  { id: '2', title: 'React Advanced Patterns', category: 'Programming', description: 'Master advanced React concepts and patterns', quizCount: 0, estimatedTime: '4 hours', difficulty: 'advanced' },
+  { id: '3', title: 'Data Structures & Algorithms', category: 'Computer Science', description: 'Essential DSA concepts for interviews', quizCount: 0, estimatedTime: '6 hours', difficulty: 'intermediate' },
+  { id: '4', title: 'UI/UX Design Principles', category: 'Design', description: 'Learn fundamental design principles', quizCount: 0, estimatedTime: '3 hours', difficulty: 'beginner' }
+];
+
+const categories = ['All', 'Programming', 'Computer Science', 'Design'];
+%>
 
 <div class="space-y-6">
   <div class="space-y-4">
@@ -41,10 +40,12 @@ description: 'Learn fundamental design principles', quizCount: 0, estimatedTime:
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     id="course-grid"
   >
-    <% courses.forEach(function(c){ const diffClass = ({ beginner:
-    'bg-success/20 text-success border-success/30', intermediate: 'bg-warning/20
-    text-warning border-warning/30', advanced: 'bg-danger/20 text-danger
-    border-danger/30', })[c.difficulty]; %>
+    <% courses.forEach(function(c){ 
+      const diffClass = ({
+        beginner: 'bg-success/20 text-success border-success/30',
+        intermediate: 'bg-warning/20 text-warning border-warning/30',
+        advanced: 'bg-danger/20 text-danger border-danger/30'
+      })[c.difficulty]; %>
     <div
       class="bg-gradient-card border border-border shadow-card rounded-xl p-0 cursor-pointer hover:shadow-glow transition"
       data-course

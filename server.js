@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
 dotenv.config({ path: "config.env" });
 
@@ -8,67 +10,106 @@ const ApiError = require("./Utils/apiError");
 const dbconnection = require("./Config/DB");
 const globalError = require("./middleware/errorMiddleware");
 
-const userRoute = require("./routes/userRoute");
-const authRoute = require("./routes/authRoute");
-const learnerRoute = require("./routes/learnerRoute");
-const courseRoute = require("./routes/courseRoute");
-
-const questionRoute = require("./routes/questionRoute");
-const assessmentRoute = require("./routes/assesmentRoute");
-
-const badgeRoute = require('./routes/badgeRoute');
-const skillRoute = require('./routes/skillRoute');
-
-const adminRoutes = require("./routes/adminRoutes");
-
-dbconnection();
-
 const app = express();
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "View")); // because your folder is named View
-app.use("/assets", express.static(path.join(__dirname, "View/assets")));
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "View"));
+
+app.use("/assets", express.static(path.join(__dirname, "View/assets")));
 app.use(express.static(path.join(__dirname, "public")));
 
+const userRoute = require("./Routes/userRoute");
+const authRoute = require("./Routes/authRoute");
+const learnerRoute = require("./Routes/learnerRoute");
+const assesmentRoute = require("./Routes/assesmentRoute");
+const questionRoute = require("./Routes/questionRoute");
+const badgeRoute = require("./Routes/badgeRoute");
+const skillRoute = require('./Routes/skillRoute');
+const learnerBadgeRoute = require('./Routes/learnerBadgeRoute');
+const learnerSkillRoute = require('./Routes/learnerSkillRoute');
+const adminRoutes = require("./Routes/adminRoutes");
 
-
+dbconnection();
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/learner", learnerRoute);
-app.use("/api/v1/instructor", instructorRoute);
-app.use("/api/v1/question", questionRoute);
-app.use("/api/v1/assessment", assessmentRoute);
-app.use("/api/v1/badge", badgeRoutes);
-app.use('/api/v1/skill', skillRoute);
-
-app.all("/", (req, res, next) => {
-app.use("/api/v1/courses", courseRoute);
-
+app.use("/api/v1/assessments", assesmentRoute);
 app.use("/api/v1/questions", questionRoute);
-app.use("/api/v1/assessments", assessmentRoute);
-
 app.use('/api/v1/badges', badgeRoute);
 app.use('/api/v1/skills', skillRoute);
+app.use('/api/v1/learnerBadges', learnerBadgeRoute);
+app.use('/api/v1/learnerSkills', learnerSkillRoute);
+// Admin API routes
+app.use('/api/admin/skills', skillRoute);
+app.use('/api/admin/assessments', assesmentRoute);
+app.use('/api/admin/questions', questionRoute);
+app.use('/api/admin/users', userRoute);
 
-// Admin pages (EJS)
-app.use(adminRoutes);
+// Admin API routes
+const { auth, allowedTo } = require('./Services/authService');
+const User = require("./Models/userModel");
+const Skill = require("./Models/skillModel");
+const Assessment = require("./Models/assesmentModel");
+const Learner = require("./Models/learnerModel");
 
-// Not Found Route
-app.use((req, res, next) => {
-  next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
+async function buildStats() {
+  const [totalUsers, totalSkills, totalQuizzes, activeUsers] = await Promise.all([
+    User.countDocuments(),
+    Skill.countDocuments(),
+    Assessment.countDocuments(),
+    Learner.countDocuments()
+  ]);
+
+  return { totalUsers, totalSkills, totalQuizzes, activeUsers };
+}
+
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const stats = await buildStats();
+    res.json({ success: true, data: stats });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
+app.use(adminRoutes);
 
+// Attach optional user from cookie (if token present) to res.locals.user
+app.use(async (req, res, next) => {
+  res.locals.user = null;
+  // default public stylesheet (can be overridden by individual renders)
+  res.locals.pageCss = '/assets/css/base.css';
+  try {
+    const token = req.cookies && req.cookies.token;
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const user = await User.findById(decoded.id);
+      res.locals.user = user || null;
+    }
+  } catch (err) {
+    res.locals.user = null;
+  }
+  next();
+});
 
-// Global Error Handler
+// Render homepage
+app.use("/", (req, res) => {
+  res.render("index", { user: res.locals.user, pageCss: '/assets/css/home.css' });
+});
+
+// Redirect legacy client-side /auth links to the API auth page
+app.use('/auth', (req, res) => {
+  res.redirect(`/api/v1/auth${req.url}`);
+});
+
 app.use(globalError);
 
-
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });

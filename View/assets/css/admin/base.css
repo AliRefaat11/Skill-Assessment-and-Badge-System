@@ -146,3 +146,12 @@ th { color: rgba(233,238,252,0.65); font-weight: 800; }
   background: rgba(239,68,68,0.12);
   margin-bottom: 14px;
 }
+.btn-danger {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.35);
+}
+
+.btn-danger:hover {
+  background: rgba(231, 76, 60, 0.22);
+}
