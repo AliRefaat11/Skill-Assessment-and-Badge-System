@@ -4,11 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Rankify</title>
-    <link rel="icon" href="../../public/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" />
     <!-- Tailwind via CDN to keep utility classes -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Public base styles and optional per-page stylesheet -->
+    <link rel="stylesheet" href="/assets/css/base.css" />
+    <% if (typeof pageCss !== 'undefined' && pageCss) { %>
+      <link rel="stylesheet" href="<%= pageCss %>" />
+    <% } %>
     <!-- Custom theme utilities to match original tokens -->
   </head>
   <body class="min-h-screen bg-background text-foreground">

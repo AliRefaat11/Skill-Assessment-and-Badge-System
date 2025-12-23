@@ -82,6 +82,8 @@ app.use(adminRoutes);
 // Attach optional user from cookie (if token present) to res.locals.user
 app.use(async (req, res, next) => {
   res.locals.user = null;
+  // default public stylesheet (can be overridden by individual renders)
+  res.locals.pageCss = '/assets/css/base.css';
   try {
     const token = req.cookies && req.cookies.token;
     if (token) {
@@ -97,7 +99,7 @@ app.use(async (req, res, next) => {
 
 // Render homepage
 app.use("/", (req, res) => {
-  res.render("index", { user: res.locals.user });
+  res.render("index", { user: res.locals.user, pageCss: '/assets/css/home.css' });
 });
 
 // Redirect legacy client-side /auth links to the API auth page
