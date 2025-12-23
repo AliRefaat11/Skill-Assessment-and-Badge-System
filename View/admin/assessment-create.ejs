@@ -1,19 +1,21 @@
 <%- include("./partials/header", { title: "Create Assessment", pageCss: "/assets/css/admin/assessment-create.css" }) %>
 <%- include("./partials/sidebar", { activeTab: activeTab }) %>
 
-
 <main class="admin-content">
   <div id="alertBox" class="alert" style="display:none;"></div>
+  
+  <!-- Page Header -->
   <div class="admin-page-head">
-    <div>
+    <div class="page-header-content">
       <h2 class="admin-title">Create Assessment</h2>
       <p class="admin-subtitle">
-Skill: <span class="muted"><%= skill?.skillName || skill?.name || "Unknown" %></span>
+        Skill: <span class="skill-name"><%= skill?.skillName || skill?.name || "Unknown" %></span>
       </p>
     </div>
-
     <div class="admin-actions">
-      <a class="btn btn-secondary" href="/admin/skills/<%= skill?._id %>/assessments">Back</a>
+      <a class="btn btn-secondary" href="/admin/skills/<%= skill?._id %>/assessments">
+        <span>←</span> Back
+      </a>
     </div>
   </div>
 
@@ -21,39 +23,64 @@ Skill: <span class="muted"><%= skill?.skillName || skill?.name || "Unknown" %></
     <div class="alert alert-error"><%= error %></div>
   <% } %>
 
-  <section class="card">
+  <!-- Assessment Details Form -->
+  <section class="card assessment-form-card">
+    <div class="card-header">
+      <h3 class="card-title">Assessment Details</h3>
+      <p class="card-subtitle">Configure the basic settings for this assessment</p>
+    </div>
+    
     <form id="createAssessmentForm" class="form-grid">
-<input type="hidden" id="skillId" value="<%= skill?._id %>" />
+      <input type="hidden" id="skillId" value="<%= skill?._id %>" />
 
       <div class="form-field">
-        <label for="durationMins">Duration (minutes)</label>
-        <input id="durationMins" type="number" min="1" placeholder="e.g. 30" required />
+        <label for="durationMins" class="form-label">
+          Duration (minutes)
+          <span class="required-indicator">*</span>
+        </label>
+        <input 
+          id="durationMins" 
+          type="number" 
+          min="1" 
+          placeholder="e.g. 30" 
+          class="form-input"
+          required 
+        />
+        <small class="form-hint">Enter the time limit for completing this assessment</small>
       </div>
 
       <div class="form-field">
-        <label for="status">Status</label>
-        <select id="status">
+        <label for="status" class="form-label">Status</label>
+        <select id="status" class="form-select">
           <option value="not-started">Not started</option>
+          <option value="in-progress">In progress</option>
+          <option value="submitted">Submitted</option>
+        </select>
+        <small class="form-hint">Initial status of the assessment</small>
       </div>
 
       <div class="form-field">
-        <label for="totalMarks">Total Marks</label>
-        <input id="totalMarks" type="number" min="0" placeholder="e.g. 100" required />
+        <label for="totalMarks" class="form-label">
+          Total Marks
+          <span class="required-indicator">*</span>
+        </label>
+        <input 
+          id="totalMarks" 
+          type="number" 
+          min="0" 
+          placeholder="e.g. 100" 
+          class="form-input"
+          required 
+        />
+        <small class="form-hint">Maximum possible score for this assessment</small>
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Create Assessment</button>
+        <button type="submit" class="btn btn-primary btn-submit">
+          <span>Create Assessment</span>
+        </button>
       </div>
     </form>
-  </section>
-
-  <section class="card">
-    <div class="questions-head">
-      <h3 class="section-title">Questions</h3>
-      <button type="button" class="btn btn-secondary" id="addQuestionBtn">+ Add Question</button>
-    </div>
-
-    <div id="questionsWrap"></div>
   </section>
 </main>
 

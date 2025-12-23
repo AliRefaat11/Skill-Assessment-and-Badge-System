@@ -1,0 +1,256 @@
+<%- include('../includes/head') %>
+
+<section class="container mx-auto px-4 py-16">
+  <div class="max-w-4xl mx-auto bg-card border border-border rounded-lg p-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 id="assess-title" class="text-2xl font-bold text-foreground mb-2">Assessment</h1>
+        <div id="assess-meta" class="text-sm text-muted-foreground">Loading...</div>
+      </div>
+      <div id="timer" class="text-lg font-semibold text-primary"></div>
+    </div>
+
+    <form id="assessment-form" class="space-y-6">
+      <div id="questions-container" class="space-y-6">
+        <!-- Questions will be loaded here -->
+        <div class="text-muted-foreground">Loading questions...</div>
+      </div>
+
+      <div class="flex gap-4 pt-6 border-t border-border">
+        <button type="submit" id="submit-btn" class="btn-primary px-6 py-3 rounded-md">
+          Submit Assessment
+        </button>
+        <button type="button" id="cancel-btn" class="btn-ghost px-6 py-3 rounded-md border border-border">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  (async function(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const assessmentId = urlParams.get('assessment') || '<%= assessmentId %>';
+    let attemptId = null;
+    let assessment = null;
+    let questions = [];
+    let duration = 0; // in minutes
+    let timerInterval = null;
+    let startTime = null;
+    let timeRemaining = 0;
+
+    // Get auth token from cookie (handled by server) or localStorage
+    function getAuthHeaders() {
+      const token = localStorage.getItem('token');
+      return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+    }
+
+    async function loadAssessment() {
+      try {
+        const res = await fetch(`/api/v1/assessments/${assessmentId}`, {
+          credentials: 'include'
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error(json.message || 'Assessment not found');
+        assessment = json.data;
+        document.getElementById('assess-title').textContent = 
+          assessment.skillId?.name ? (assessment.skillId.name + ' — Assessment') : 'Assessment';
+        document.getElementById('assess-meta').innerHTML = 
+          `Duration: ${assessment.duration} mins &middot; Total Marks: ${assessment.TotalMarks}`;
+        duration = assessment.duration || 60;
+      } catch (err) {
+        console.error(err);
+        document.getElementById('assess-meta').textContent = 'Failed to load assessment';
+      }
+    }
+
+    async function loadQuestions() {
+      try {
+        const res = await fetch(`/api/v1/questions/assessment/${assessmentId}`, {
+          credentials: 'include'
+        });
+        const json = await res.json();
+        if (!json.success || !json.data || json.data.length === 0) {
+          throw new Error('No questions found for this assessment');
+        }
+        questions = json.data;
+        renderQuestions();
+      } catch (err) {
+        console.error(err);
+        document.getElementById('questions-container').innerHTML = 
+          '<div class="text-danger">Failed to load questions: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questions-container');
+      container.innerHTML = questions.map((q, idx) => {
+        let inputHtml = '';
+        
+        if (q.type === 'mcq' && q.options && q.options.length > 0) {
+          inputHtml = q.options.map((opt, optIdx) => `
+            <label class="flex items-center p-3 rounded border border-border hover:bg-white/5 cursor-pointer">
+              <input type="radio" name="question_${q._id}" value="${escapeHtml(opt)}" class="mr-3" required>
+              <span>${escapeHtml(opt)}</span>
+            </label>
+          `).join('');
+        } else if (q.type === 'true-false') {
+          inputHtml = `
+            <label class="flex items-center p-3 rounded border border-border hover:bg-white/5 cursor-pointer">
+              <input type="radio" name="question_${q._id}" value="true" class="mr-3" required>
+              <span>True</span>
+            </label>
+            <label class="flex items-center p-3 rounded border border-border hover:bg-white/5 cursor-pointer">
+              <input type="radio" name="question_${q._id}" value="false" class="mr-3" required>
+              <span>False</span>
+            </label>
+          `;
+        } else {
+          inputHtml = `
+            <textarea name="question_${q._id}" rows="3" class="input w-full" placeholder="Enter your answer..." required></textarea>
+          `;
+        }
+
+        return `
+          <div class="p-6 rounded-lg border border-border bg-white/5">
+            <div class="flex items-start justify-between mb-4">
+              <h3 class="text-lg font-semibold text-foreground">Question ${idx + 1}</h3>
+              <span class="text-sm text-muted-foreground">${q.points} points</span>
+            </div>
+            <p class="text-foreground mb-4">${escapeHtml(q.text)}</p>
+            <div class="space-y-2">
+              ${inputHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function startAttempt() {
+      try {
+        const res = await fetch(`/api/v1/attempts/start?assessment=${assessmentId}`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          credentials: 'include' // Include cookies
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error(json.message || 'Failed to start attempt');
+        attemptId = json.data._id;
+        startTime = new Date(json.data.startedAt || new Date());
+        timeRemaining = duration * 60; // convert to seconds
+        startTimer();
+      } catch (err) {
+        console.error('Failed to start attempt:', err);
+        // Continue anyway - user can still submit
+      }
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      
+      timerInterval = setInterval(() => {
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          alert('Time is up! Submitting assessment...');
+          submitAssessment();
+          return;
+        }
+        
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        document.getElementById('timer').textContent = 
+          `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        timeRemaining--;
+      }, 1000);
+    }
+
+    async function submitAssessment() {
+      const form = document.getElementById('assessment-form');
+      const formData = new FormData(form);
+      
+      const answers = questions.map(q => {
+        const answer = formData.get(`question_${q._id}`);
+        return {
+          questionId: q._id,
+          answer: answer || ''
+        };
+      });
+
+      if (!attemptId) {
+        // Try to start attempt first
+        await startAttempt();
+      }
+
+      if (!attemptId) {
+        alert('Failed to start attempt. Please refresh and try again.');
+        return;
+      }
+
+      try {
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        const res = await fetch('/api/v1/attempts/submit', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          credentials: 'include', // Include cookies
+          body: JSON.stringify({
+            attemptId: attemptId,
+            answers: answers
+          })
+        });
+
+        const json = await res.json();
+        
+        if (json.success) {
+          alert(`Assessment submitted successfully! Your score: ${json.data.score}/${assessment.TotalMarks}`);
+          window.location.href = `/assessments/${assessmentId}`;
+        } else {
+          throw new Error(json.message || 'Failed to submit assessment');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to submit assessment: ' + err.message);
+        document.getElementById('submit-btn').disabled = false;
+        document.getElementById('submit-btn').textContent = 'Submit Assessment';
+      }
+    }
+
+    // Initialize
+    document.getElementById('cancel-btn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to cancel? Your progress will be lost.')) {
+        window.location.href = `/assessments/${assessmentId}`;
+      }
+    });
+
+    document.getElementById('assessment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (confirm('Are you sure you want to submit your assessment? You cannot change your answers after submission.')) {
+        await submitAssessment();
+      }
+    });
+
+    // Load data
+    await Promise.all([loadAssessment(), loadQuestions()]);
+    await startAttempt();
+
+    function escapeHtml(s) {
+      return (s || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[m]));
+    }
+  })();
+</script>
+</body>
+</html>
+

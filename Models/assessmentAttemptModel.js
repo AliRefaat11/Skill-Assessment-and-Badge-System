@@ -13,16 +13,29 @@ const assessmentAttemptSchema = new mongoose.Schema({
     },
     score: {
         type: Number,
-        required: true
+        default: 0
     },
     status: {
         type: String,
-        enum: ["passed", "failed"],
+        enum: ["pending", "in-progress", "submitted", "passed", "failed"],
         default: "pending"
     },
+    answers: [{
+        questionId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Question",
+            required: true
+        },
+        answer: {
+            type: String,
+            required: true
+        }
+    }],
+    startedAt: {
+        type: Date
+    },
     submittedAt: {
-        type: Date,
-        default: Date.now
+        type: Date
     }
 });
 

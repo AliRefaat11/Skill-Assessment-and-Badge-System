@@ -31,10 +31,37 @@ const badgeRoute = require("./Routes/badgeRoute");
 const skillRoute = require('./Routes/skillRoute');
 const learnerBadgeRoute = require('./Routes/learnerBadgeRoute');
 const learnerSkillRoute = require('./Routes/learnerSkillRoute');
+const assessmentAttemptRoute = require('./Routes/assessmentAttemptRoute');
 const adminRoutes = require("./Routes/adminRoutes");
 
 
 dbconnection();
+
+// Import models and services needed for middleware
+const { auth, allowedTo } = require('./Services/authService');
+const User = require("./Models/userModel");
+const Skill = require("./Models/skillModel");
+const Assessment = require("./Models/assesmentModel");
+const Learner = require("./Models/learnerModel");
+
+// Attach optional user from cookie (if token present) to res.locals.user
+// This MUST be before route registrations so res.locals.user is available in route handlers
+app.use(async (req, res, next) => {
+  res.locals.user = null;
+  // default public stylesheet (can be overridden by individual renders)
+  res.locals.pageCss = '/assets/css/base.css';
+  try {
+    const token = req.cookies && req.cookies.token;
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const user = await User.findById(decoded.id);
+      res.locals.user = user || null;
+    }
+  } catch (err) {
+    res.locals.user = null;
+  }
+  next();
+});
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRoute);
@@ -45,20 +72,14 @@ app.use('/api/v1/badges', badgeRoute);
 app.use('/api/v1/skills', skillRoute);
 app.use('/api/v1/learnerBadges', learnerBadgeRoute);
 app.use('/api/v1/learnerSkills', learnerSkillRoute);
+app.use('/api/v1/attempts', assessmentAttemptRoute);
+app.use('/attempts', assessmentAttemptRoute);
 // Admin API routes
 app.use('/api/admin/skills', skillRoute);
 app.use('/api/admin/assessments', assesmentRoute);
 app.use('/api/admin/questions', questionRoute);
 app.use('/api/admin/users', userRoute);
 app.use("/admin", require("./Routes/dashboardRoutes"));
-
-
-// Admin API routes
-const { auth, allowedTo } = require('./Services/authService');
-const User = require("./Models/userModel");
-const Skill = require("./Models/skillModel");
-const Assessment = require("./Models/assesmentModel");
-const Learner = require("./Models/learnerModel");
 
 async function buildStats() {
   const [totalUsers, totalSkills, totalQuizzes, activeUsers] = await Promise.all([
@@ -81,24 +102,6 @@ app.get('/api/admin/stats', async (req, res) => {
 });
 
 app.use(adminRoutes);
-
-// Attach optional user from cookie (if token present) to res.locals.user
-app.use(async (req, res, next) => {
-  res.locals.user = null;
-  // default public stylesheet (can be overridden by individual renders)
-  res.locals.pageCss = '/assets/css/base.css';
-  try {
-    const token = req.cookies && req.cookies.token;
-    if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      const user = await User.findById(decoded.id);
-      res.locals.user = user || null;
-    }
-  } catch (err) {
-    res.locals.user = null;
-  }
-  next();
-});
 
 // Assessment page (must be before the homepage catch-all)
 app.get('/assessments/:id', (req, res) => {
