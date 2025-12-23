@@ -97,14 +97,19 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Render homepage
-app.use("/", (req, res) => {
-  res.render("index", { user: res.locals.user, pageCss: '/assets/css/home.css' });
+// Assessment page (must be before the homepage catch-all)
+app.get('/assessments/:id', (req, res) => {
+  res.render('pages/assessment', { user: res.locals.user, pageCss: '/assets/css/assessment.css' });
 });
 
 // Redirect legacy client-side /auth links to the API auth page
 app.use('/auth', (req, res) => {
   res.redirect(`/api/v1/auth${req.url}`);
+});
+
+// Render homepage
+app.use("/", (req, res) => {
+  res.render("index", { user: res.locals.user, pageCss: '/assets/css/home.css' });
 });
 
 app.use(globalError);
