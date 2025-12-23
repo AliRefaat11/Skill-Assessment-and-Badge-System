@@ -1,0 +1,31 @@
+<%- include("partials/header", {
+  title: "Create Skill",
+  pageCss: "/assets/css/admin/form-create.css"
+}) %><%- include("partials/sidebar", { activeTab }) %>
+
+<div class="pageHead">
+  <div class="titleBlock">
+    <h2>Questions</h2>
+    <p class="muted">Assessment: <%= assessmentId %></p>
+  </div>
+  <a class="btnPrimary" href="/admin/assessments/<%= assessmentId %>/questions/new">+ Add Question</a>
+</div>
+
+<div id="alertBox" class="alert" style="display:none;"></div>
+
+<div class="tableCard" data-assessment-id="<%= assessmentId %>">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Correct</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="questionsTableBody">
+      <tr><td colspan="3">Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/questions.js" }) %>

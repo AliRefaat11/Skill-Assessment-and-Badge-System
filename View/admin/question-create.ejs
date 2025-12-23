@@ -1,0 +1,17 @@
+<input type="hidden" id="assessmentID" value="<%= assessmentId %>" />
+
+<label>Question Text</label>
+<input id="questionText" type="text" required />
+
+<label>Question Type</label>
+<select id="type">
+  <option value="mcq">MCQ</option>
+  <option value="true-false">True / False</option>
+  <option value="short">Short Answer</option>
+</select>
+
+<label>Points</label>
+<input id="points" type="number" min="1" value="1" required />
+
+<label>Correct Answer</label>
+<input id="correctAnswer" type="text" required />

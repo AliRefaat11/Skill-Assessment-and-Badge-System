@@ -4,10 +4,11 @@ const bcrypt = require("bcryptjs");
 const ApiError = require("../Utils/apiError");
 const User = require("../Models/userModel");
 const Learner = require("../Models/learnerModel");
+const LearnerSkill = require("../Models/learnerSkillModel");
 const { createToken } = require("../Utils/createToken");
 
 exports.signup = asyncHandler(async (req, res, next) => {
-  const { FName, LName, Email, Password, PhoneNumber, Gender, dateOfBirth } =
+  const { FName, LName, Email, Password, PhoneNumber, Gender, dateOfBirth, level, education, skillId } =
     req.body;
 
   const hashedPassword = await bcrypt.hash(Password, 10);
@@ -24,10 +25,21 @@ exports.signup = asyncHandler(async (req, res, next) => {
   });
 
   const learner = await Learner.create({
-    UserID: user._id
+    UserID: user._id,
+    Education: education,
+    Level: level,
   });
 
+  if (skillId) {
+    await LearnerSkill.create({
+      learnerID: learner._id,
+      skillID: skillId,
+    });
+  }
+
   const token = createToken(user._id);
+
+  res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
   res.status(201).json({
     status: "success",
     message: "User created. Complete your learner profile.",
@@ -44,20 +56,37 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ApiError("Invalid email or password", 401));
   }
   const token = createToken(user._id);
-  res.status(201).json({
+  
+  res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+  res.status(200).json({
     status: "success",
     token,
     role: user.Role,
   });
 });
 
+exports.logout = (req, res) => {
+  res.cookie('token', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    expires: new Date(0)
+  });
+  
+  res.redirect('/api/v1/auth');
+}; 
+
 exports.auth = asyncHandler(async (req, res, next) => {
   let token;
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+  }
+
+  else if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
   }
   if (!token) {
     return next(new ApiError("Please login to get access", 401));
@@ -80,7 +109,6 @@ exports.auth = asyncHandler(async (req, res, next) => {
   next();
 });
 
-// @desc    Authorization (User Permissions)
 exports.allowedTo = (...Roles) =>
   asyncHandler(async (req, res, next) => {
     if (!Roles.includes(req.user.Role)) {
@@ -89,4 +117,8 @@ exports.allowedTo = (...Roles) =>
       );
     }
     next();
-  });
+});
+
+exports.renderAuth = (req, res) => {
+    res.render('pages/auth', { user: null });
+};

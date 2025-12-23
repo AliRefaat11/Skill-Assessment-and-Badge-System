@@ -1,0 +1,48 @@
+<%- include("partials/header", { title: "Create Skill", pageCss: "/assets/css/admin/form-create.css" }) %>
+<%- include("partials/sidebar", { activeTab }) %>
+
+<div class="crumbs">
+  <a href="/admin/skills">Skills</a>
+  <span>›</span>
+  <span>Create Skill</span>
+</div>
+
+<div class="pageHead">
+  <div class="titleBlock">
+    <h2>Create Skill</h2>
+    <p class="muted">Add a new skill to the system</p>
+  </div>
+</div>
+
+<div id="alertBox" class="alert" style="display:none;"></div>
+
+<form id="createSkillForm" class="formCard">
+  <label>Skill Name</label>
+  <input id="skillName" type="text" placeholder="e.g. Java Basics" required />
+
+  <label>Category</label>
+  <select id="category" required>
+    <option value="">Select category</option>
+    <option value="Programming">Programming</option>
+    <option value="Design">Design</option>
+    <option value="Marketing">Marketing</option>
+    <option value="Business">Business</option>
+    <option value="Data Science">Data Science</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <label>Difficulty Level</label>
+<select id="difficultyLevel" required>
+  <option value="">Select level</option>
+  <option value="Beginner">Beginner</option>
+  <option value="Intermediate">Intermediate</option>
+  <option value="Advanced">Advanced</option>
+</select>
+
+  <div class="formActions">
+    <a class="btnGhost" href="/admin/skills">Cancel</a>
+    <button class="btnPrimary" type="submit">Create Skill</button>
+  </div>
+</form>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/skill-create.js" }) %>

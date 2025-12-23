@@ -20,27 +20,40 @@ exports.getLearnerById = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", data: learner });
 });
 
-exports.createLearner = asyncHandler(async (req, res, next) => {
-  const UserID = req.user._id;
-
-  const { education, specialization, fieldOfInterest, Level } = req.body;
-  const learner = await Learner.findOne({ UserID });
-  
+exports.getLearnerByUserId = asyncHandler(async (req, res, next) => {
+  const userId = req.params.userId;
+  const learner = await Learner.findOne({ userId: userId }).populate('userId', 'FName LName Email');
   if (!learner) {
-    return next(new ApiError("Learner profile not found. Please sign up first.", 404));
+    return next(new ApiError("Learner not found", 404));
   }
-
-  learner.Education = education;
-  learner.Specialization = specialization;
-  learner.Field_Of_Interest = fieldOfInterest;
-  learner.Level = Level;  
-  await learner.save();
-
-  res.status(200).json({ 
-    status: "success", 
-    message: "Learner profile completed successfully",
-    data: learner 
-  });
+  res.status(200).json({ status: "success", data: learner });
 });
 
-exports.updateLearner = asyncHandler(async (req, res, next) => {});
+exports.updateLearner = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return next(new ApiError("Invalid learner ID", 400));
+  }
+  const learner = await Learner.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+  if (!learner) {
+    return next(new ApiError("Learner not found", 404));
+  }
+  res.status(200).json({ status: "success", data: learner });
+});
+
+exports.deleteLearner = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return next(new ApiError("Invalid learner ID", 400));
+  }
+  await Learner.findByIdAndDelete(id);
+  res.status(200).json({ status: "success", message: "Learner deleted successfully" });
+});
+
+exports.renderprofile = async (req, res) => {
+  const learner = await Learner.findOne({ UserID: req.user._id });
+  res.render('pages/learnerprofile', {
+      user: req.user,
+      learner: learner || null
+  });
+};

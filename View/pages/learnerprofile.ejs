@@ -1,0 +1,421 @@
+<%- include('../includes/head') %> 
+
+<%
+  const _stats = (locals && locals.stats) ? locals.stats : {
+    currentXP: 0,
+    nextLevelXP: 1000,
+    xpProgress: 0,
+    xpToNextLevel: 1000,
+    streak: 0,
+    completedQuizzes: 0,
+    totalQuizzes: 0,
+    completionPercent: 0,
+    remainingQuizzes: 0
+  };
+  const _badges = (locals && locals.badges) ? locals.badges : [];
+  const _skills = (locals && locals.skills) ? locals.skills : [];
+  const _results = (locals && locals.results) ? locals.results : [];
+%>
+
+
+<% if (!user || user.Role !== "Learner") { %>
+<script>
+  location.href = "/api/v1/auth/?tab=login";
+</script>
+<% } %>
+
+<div class="min-h-screen px-4 py-8 profile-page">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="p-3 bg-primary/20 rounded-2xl">
+          <i data-lucide="zap" class="w-6 h-6 text-primary"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-foreground"><%= user ? user.FName : '' %><%= user ? user.LName : '' %></h1>
+          <p class="text-muted-foreground"><%= user ? user.Email : '' %></p>
+        </div>
+      </div>
+      <a
+        href="/api/v1/auth/logout"
+        class="inline-flex items-center px-3 py-2 rounded-md border border-border"
+      >
+        <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Logout
+      </a>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-3">
+      <div class="bg-gradient-card border border-border shadow-card rounded-xl">
+        <div class="px-6 py-4 border-b border-border/50">
+          <div class="text-sm flex items-center gap-2 text-muted-foreground">
+            <i data-lucide="trending-up" class="w-4 h-4"></i>
+            Level Progress
+          </div>
+        </div>
+        <div class="p-6 space-y-3">
+          <div class="flex items-baseline gap-2">
+            <span class="text-3xl font-bold text-foreground"><%= learner ? learner.Level : '' %></span>
+          </div>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-muted-foreground">XP</span>
+              <span class="font-semibold text-foreground"><%= _stats.currentXP %> / <%= _stats.nextLevelXP %></span>
+            </div>
+            <div class="w-full h-2 rounded" style="background-color: hsla(var(--card), 0.2)">
+              <div class="h-2 bg-primary rounded" data-width="<%= _stats.xpProgress %>%"></div>
+            </div>
+          </div>
+          <p class="text-xs text-muted-foreground"><%= _stats.xpToNextLevel %> XP to next level</p>
+        </div>
+      </div>
+
+      <div class="bg-gradient-card border border-border shadow-card rounded-xl">
+        <div class="px-6 py-4 border-b border-border/50">
+          <div class="text-sm flex items-center gap-2 text-muted-foreground">
+            <i data-lucide="flame" class="w-4 h-4"></i>
+            Current Streak
+          </div>
+        </div>
+        <div class="p-6 space-y-3">
+          <div class="flex items-baseline gap-2">
+            <span class="text-3xl font-bold text-warning"><%= _stats.streak %></span>
+            <span class="text-lg text-muted-foreground">days</span>
+          </div>
+          <div class="flex items-center gap-1 text-sm text-muted-foreground">
+            <i data-lucide="flame" class="w-4 h-4 text-warning"></i>
+            <span><%= _stats.streak > 0 ? 'Keep it going!' : 'Start your streak!' %></span>
+          </div>
+          <p class="text-xs text-muted-foreground">
+            Complete a quiz daily to maintain your streak
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-gradient-card border border-border shadow-card rounded-xl">
+        <div class="px-6 py-4 border-b border-border/50">
+          <div class="text-sm flex items-center gap-2 text-muted-foreground">
+            <i data-lucide="target" class="w-4 h-4"></i>
+            Quiz Completion
+          </div>
+        </div>
+        <div class="p-6 space-y-3">
+          <div class="flex items-baseline gap-2">
+            <span class="text-3xl font-bold text-success"><%= _stats.completionPercent %>%</span>
+          </div>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-muted-foreground">Completed</span>
+              <span class="font-semibold text-foreground"><%= _stats.completedQuizzes %> / <%= _stats.totalQuizzes %></span>
+            </div>
+            <div class="w-full h-2 rounded" style="background-color: hsla(var(--card), 0.2)">
+              <div class="h-2 bg-secondary rounded" data-width="<%= _stats.completionPercent %>%"></div>
+            </div>
+          </div>
+          <p class="text-xs text-muted-foreground"><%= _stats.remainingQuizzes %> quizzes remaining</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div>
+        <div class="grid grid-cols-4 max-w-lg gap-2">
+          <button
+            data-tab="badges"
+            data-group="profile-tabs"
+            class="px-3 py-2 rounded-md bg-card shadow-sm"
+          >
+            <i data-lucide="trophy" class="w-4 h-4 mr-1 inline"></i> Badges
+          </button>
+          <button
+            data-tab="skills"
+            data-group="profile-tabs"
+            class="px-3 py-2 rounded-md text-muted-foreground"
+          >
+            <i data-lucide="book-open" class="w-4 h-4 mr-1 inline"></i> Skills
+          </button>
+          <button
+            data-tab="results"
+            data-group="profile-tabs"
+            class="px-3 py-2 rounded-md text-muted-foreground"
+          >
+            <i data-lucide="bar-chart-3" class="w-4 h-4 mr-1 inline"></i>
+            Results
+          </button>
+          <button
+            data-tab="edit-profile"
+            data-group="profile-tabs"
+            class="px-3 py-2 rounded-md text-muted-foreground"
+          >
+            <i data-lucide="user" class="w-4 h-4 mr-1 inline"></i>
+            Edit Profile
+          </button>
+        </div>
+      </div>
+
+      <div data-tab-content="badges" data-group="profile-tabs">
+        <div
+          class="bg-gradient-card border border-border shadow-card rounded-xl"
+        >
+          <div class="px-6 py-4 border-b border-border/50">
+            <h3 class="text-foreground font-semibold">Your Achievements</h3>
+          </div>
+          <div class="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <%
+              const badgeCfg = {
+                bronze: {text: 'text-badge-bronze'},
+                silver: {text: 'text-badge-silver'},
+                gold: {text: 'text-badge-gold'},
+                special: {text: 'text-badge-special'}
+              };
+            %>
+            <% if (_badges && _badges.length > 0) { %>
+              <% _badges.forEach(function(b) {
+                const badgeType = b.type || 'bronze';
+                const unlocked = b.unlocked || false;
+                const cfg = badgeCfg[badgeType] || badgeCfg.bronze;
+                const classes = unlocked ? 'hover:scale-105 cursor-pointer' : 'border-border/50 grayscale opacity-60';
+              %>
+              <div class="relative p-6 rounded-xl border-2 transition-all duration-300 bg-card <%= classes %>" style="border-color: <%= unlocked ? 'hsla(var(--' + badgeType + '), 0.4)' : 'hsla(var(--border), 0.5)' %>" data-shadow="<%= unlocked ? '0 0 ' + (badgeType === 'special' ? '30' : '20') + 'px hsla(var(--' + badgeType + '), ' + (badgeType === 'special' ? '0.5' : '0.4') + ')' : 'none' %>">
+                <% if (unlocked) { %>
+                <div class="absolute inset-0 rounded-xl" data-bg="<%= 'hsla(var(--' + badgeType + '), 0.1)' %>"></div>
+                <% } %>
+                <div class="relative flex items-start gap-4">
+                  <div class="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center border-2" data-style="<%= unlocked ? 'border-color: hsla(var(--' + badgeType + '), 0.4); background-color: hsla(var(--' + badgeType + '), 0.2)' : 'background-color: hsla(var(--card), 0.2); border-color: hsla(var(--border), 0.5)' %>">
+                    <i data-lucide="award" class="w-8 h-8 <%= unlocked ? cfg.text : 'text-muted-foreground' %>"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-lg text-foreground mb-1"><%= b.Name || b.title %></h3>
+                    <p class="text-sm text-muted-foreground leading-relaxed"><%= b.Description || b.desc %></p>
+                    <% if (!unlocked) { %>
+                    <div class="mt-2 text-xs font-medium text-muted-foreground/80 italic">Locked</div>
+                    <% } %>
+                  </div>
+                </div>
+                <% if (unlocked && badgeType === 'special') { %>
+                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent to-transparent animate-shimmer" style="background-size: 200% 100%; background-image: linear-gradient(to right, transparent, hsla(var(--card), 0.1), transparent)"></div>
+                <% } %>
+              </div>
+              <% }); %>
+            <% } else { %>
+              <div class="col-span-full text-center py-8 text-muted-foreground">
+                <i data-lucide="award" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                <p>No badges earned yet. Complete quizzes to earn badges!</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-4" id="skills-container">
+        <div class="text-center py-8 text-muted-foreground">
+          <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
+          <p>Loading skills...</p>
+        </div>
+      </div>
+
+
+      <div class="hidden" data-tab-content="results" data-group="profile-tabs">
+        <div
+          class="bg-gradient-card border border-border shadow-card rounded-xl"
+        >
+          <div class="px-6 py-4 border-b border-border/50">
+            <h3 class="text-foreground font-semibold">Recent Quiz Results</h3>
+          </div>
+          <div class="p-6 space-y-3">
+            <% if (_results && _results.length > 0) { %>
+              <% _results.forEach(function(r) {
+                const scorePercent = r.totalQuestions > 0 ? Math.round((r.score / r.totalQuestions) * 100) : 0;
+                const scoreColor = scorePercent >= 80 ? 'text-success' : (scorePercent >= 50 ? 'text-warning' : 'text-destructive');
+                const xpEarned = r.passed ? '+' + (scorePercent * 2) + ' XP' : '0 XP';
+              %>
+              <div class="flex items-center justify-between p-3 rounded-lg" style="background-color: hsla(var(--card), 0.1)">
+                <div>
+                  <p class="font-medium text-foreground"><%= r.courseId ? (r.courseId.Title || 'Assessment') : 'Assessment' %></p>
+                  <p class="text-sm text-muted-foreground">
+                    <% if (r.submittedAt) { %>
+                      Completed <%= new Date(r.submittedAt).toLocaleDateString() %>
+                    <% } else { %>
+                      <%= r.status %>
+                    <% } %>
+                  </p>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold <%= scoreColor %>"><%= scorePercent %>%</p>
+                  <p class="text-xs text-muted-foreground"><%= xpEarned %></p>
+                </div>
+              </div>
+              <% }); %>
+            <% } else { %>
+              <div class="text-center py-8 text-muted-foreground">
+                <i data-lucide="bar-chart-3" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                <p>No quiz results yet. Take an assessment to see your progress!</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden" data-tab-content="edit-profile" data-group="profile-tabs">
+        <div
+          class="bg-gradient-card border border-border shadow-card rounded-xl"
+        >
+          <div class="px-6 py-4 border-b border-border/50">
+            <h3 class="text-foreground font-semibold">Edit Profile</h3>
+          </div>
+          <div class="p-6">
+            <form class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-foreground mb-1">First Name</label>
+                  <input type="text" class="input w-full" placeholder="Enter first name">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-foreground mb-1">Last Name</label>
+                  <input type="text" class="input w-full" placeholder="Enter last name">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Phone Number</label>
+                <input type="tel" class="input w-full" placeholder="Enter phone number">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Date of Birth</label>
+                <input type="date" class="input w-full">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-foreground mb-1">Education</label>
+                <input type="text" class="input w-full" placeholder="Enter education level or institution">
+              </div>
+              <div class="pt-4">
+                <button type="submit" class="btn-primary px-6 py-2 rounded-md">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const LEARNER_ID = "<%= learner ? learner.id : '' %>";
+
+  let skillsLoaded = false;
+
+  async function loadLearnerSkills() {
+    if (skillsLoaded || !LEARNER_ID) return;
+
+    const container = document.getElementById('skills-container');
+    container.innerHTML = `
+      <div class="text-center py-8 text-muted-foreground">
+        <i data-lucide="loader" class="w-8 h-8 mx-auto mb-3 animate-spin"></i>
+        <p>Loading skills...</p>
+      </div>
+    `;
+
+    try {
+      const res = await fetch(`/api/v1/learnerSkills/learner/${LEARNER_ID}`);
+      if (!res.ok) throw new Error('Failed to load skills');
+
+      const data = await res.json();
+      const skills = data.data || [];
+
+      if (!skills.length) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-muted-foreground">
+            <i data-lucide="book-open" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+            <p>No skills assigned yet.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const skillColors = ['bg-primary', 'bg-secondary', 'bg-accent', 'bg-success', 'bg-warning'];
+      const categoryLevels = { Beginner: 33, Intermediate: 66, Expert: 100 };
+
+      container.innerHTML = skills.map((s, index) => {
+        const barColor = skillColors[index % skillColors.length];
+        const percent = categoryLevels[s.category] || 33;
+
+        return `
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-foreground font-medium">${s.skillName}</span>
+              <span class="text-muted-foreground">${s.category}</span>
+            </div>
+            <div class="h-2 rounded-full overflow-hidden" style="background-color: hsla(var(--card), 0.2)">
+              <div class="h-full ${barColor}" style="width: ${percent}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      skillsLoaded = true;
+      lucide.createIcons();
+
+    } catch (err) {
+      container.innerHTML = `
+        <div class="text-center py-8 text-destructive">
+          <p>Failed to load skills.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Hook into tab click
+  document.querySelectorAll('[data-tab="skills"]').forEach(btn => {
+    btn.addEventListener('click', loadLearnerSkills);
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    // Progress bars & styles (already in your page)
+    document.querySelectorAll('[data-width]').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+    document.querySelectorAll('[data-shadow]').forEach(el => {
+      el.style.boxShadow = el.dataset.shadow;
+    });
+    document.querySelectorAll('[data-bg]').forEach(el => {
+      el.style.backgroundColor = el.dataset.bg;
+    });
+    document.querySelectorAll('[data-style]').forEach(el => {
+      el.style.cssText += el.dataset.style;
+    });
+
+    // TAB SWITCHING LOGIC
+    const tabs = document.querySelectorAll('[data-tab][data-group="profile-tabs"]');
+    const contents = document.querySelectorAll('[data-tab-content][data-group="profile-tabs"]');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+
+        // Reset all tabs
+        tabs.forEach(t => {
+          t.classList.remove('bg-card', 'shadow-sm');
+          t.classList.add('text-muted-foreground');
+        });
+
+        // Activate clicked tab
+        tab.classList.add('bg-card', 'shadow-sm');
+        tab.classList.remove('text-muted-foreground');
+
+        // Hide all contents
+        contents.forEach(c => c.classList.add('hidden'));
+
+        // Show selected content
+        const activeContent = document.querySelector(
+          `[data-tab-content="${target}"][data-group="profile-tabs"]`
+        );
+        if (activeContent) {
+          activeContent.classList.remove('hidden');
+        }
+      });
+    });
+
+  });
+</script>
+
+<%- include('../includes/footer') %>
