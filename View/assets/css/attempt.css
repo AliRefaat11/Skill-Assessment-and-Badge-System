@@ -1,0 +1,32 @@
+/* Attempt page styles */
+#timer {
+  font-family: 'Courier New', monospace;
+  padding: 0.5rem 1rem;
+  background: rgba(var(--primary-rgb, 59, 130, 246), 0.1);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(var(--primary-rgb, 59, 130, 246), 0.3);
+}
+
+#questions-container label {
+  transition: all 0.2s;
+}
+
+#questions-container label:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#questions-container input[type="radio"]:checked + span {
+  font-weight: 600;
+  color: var(--primary, #3b82f6);
+}
+
+#questions-container textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+#submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
