@@ -37,6 +37,17 @@ exports.getAllSkillLearners = async (req, res) => {
 exports.assignSkillToLearner = async (req, res) => {
   try {
     const { learnerID, skillID } = req.body;
+    
+    // Check if skill is already assigned to this learner
+    const existing = await learnerSkillModel.findOne({ learnerID, skillID });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: 'Skill is already assigned to this learner',
+        data: existing
+      });
+    }
+    
     const newLearnerSkill = await learnerSkillModel.create({ learnerID, skillID });
     res.status(201).json({
       success: true,
@@ -71,10 +82,27 @@ exports.deleteLearnerSkill = async (req, res) => {
 exports.getAllSkillsByLearner = async (req, res) => {
     try {
         const { learnerID } = req.params;
-        const learnerSkills = await learnerSkillModel.find({ learnerID });
+        const learnerSkills = await learnerSkillModel.find({ learnerID }).populate('skillID');
+        
+        // Transform the data to include skill details
+        const skillsWithDetails = learnerSkills.map(ls => {
+            const skill = ls.skillID;
+            return {
+                _id: ls._id,
+                learnerID: ls.learnerID,
+                skillID: skill?._id || ls.skillID,
+                skillName: skill?.skillName || skill?.name || 'Unknown Skill',
+                description: skill?.description || '',
+                category: skill?.category || '',
+                difficultyLevel: skill?.difficultyLevel || 'Beginner',
+                createdAt: ls.createdAt,
+                updatedAt: ls.updatedAt
+            };
+        });
+        
         res.status(200).json({
             success: true,
-            data: learnerSkills
+            data: skillsWithDetails
         });
     } catch (error) {
         res.status(500).json({
