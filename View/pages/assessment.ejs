@@ -1,0 +1,41 @@
+<%- include('../includes/head') %>
+
+<section class="container mx-auto px-4 py-16">
+  <div class="max-w-3xl mx-auto bg-card border border-border rounded-lg p-8">
+    <h1 id="assess-title" class="text-2xl font-bold text-foreground mb-2">Assessment</h1>
+    <div id="assess-meta" class="text-sm text-muted-foreground mb-6">Loading...</div>
+
+    <div id="questions" class="space-y-4"></div>
+
+    <div class="mt-6">
+      <a id="start-btn" href="#" class="btn-primary inline-block px-4 py-3 rounded-md">Start Assessment</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  (async function(){
+    const id = location.pathname.split('/').pop();
+    try{
+      const [aRes,qRes] = await Promise.all([
+        fetch(`/api/v1/assessments/${id}`),
+        fetch(`/api/v1/questions/assessment/${id}`)
+      ]);
+      const aJson = await aRes.json();
+      const qJson = await qRes.json();
+      if(!aJson.success) throw new Error(aJson.message || 'Assessment not found');
+      const assessment = aJson.data;
+      document.getElementById('assess-title').textContent = assessment.skillId?.name ? (assessment.skillId.name + ' — Assessment') : 'Assessment';
+      document.getElementById('assess-meta').innerHTML = `Duration: ${assessment.duration} mins &middot; Total Marks: ${assessment.TotalMarks}`;
+      const qs = (qJson.success && qJson.data) ? qJson.data : [];
+      const qEl = document.getElementById('questions');
+      qEl.innerHTML = qs.map(q => `<div class="p-3 rounded border border-border bg-white/5"><div class="font-semibold text-foreground">${escapeHtml(q.text)}</div><div class="text-xs text-muted-foreground">Points: ${q.points}</div></div>`).join('') || '<div class="text-muted-foreground">No questions yet.</div>';
+      document.getElementById('start-btn').href = `/attempts/start?assessment=${id}`;
+    }catch(err){
+      console.error(err);
+      document.getElementById('assess-meta').textContent = 'Failed to load assessment';
+    }
+
+    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  })();
+</script>

@@ -15,6 +15,7 @@ exports.createQuestion = async (req, res, next) => {
       type,
       text,
       points,
+      options: req.body.options || [],
       correctAnswer
     });
 

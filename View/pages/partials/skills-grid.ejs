@@ -1,7 +1,10 @@
 <section class="container mx-auto px-4 py-12">
-  <h2 class="text-3xl font-bold text-foreground mb-6">Explore Skills</h2>
+  <!-- Search -->
+  <div class="mb-6 max-w-xl">
+    <input id="skill-search" type="search" placeholder="Search skills, categories, or topics..." class="input w-full" />
+  </div>
 
-  <div id="skills-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+  <div id="skills-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
     <!-- Filled by JS -->
     <div class="text-muted-foreground">Loading skills...</div>
   </div>
@@ -17,7 +20,13 @@
       <button class="absolute right-3 top-3 text-muted-foreground" data-dialog-close>
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
-      <h3 id="skill-dlg-title" class="text-xl font-bold text-foreground mb-2">Skill Assessments</h3>
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="skill-dlg-title" class="text-xl font-bold text-foreground">Skill Assessments</h3>
+        <button id="assign-skill-btn" class="inline-flex items-center px-4 py-2 rounded-md btn-primary">
+          <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+          Assign
+        </button>
+      </div>
       <div id="skill-assessments-list" class="space-y-4 text-sm text-muted-foreground">
         <!-- Filled by JS -->
       </div>
@@ -30,38 +39,57 @@
 
   <script>
     (function(){
+      let skillsData = [];
+      let currentSkillId = null;
+      const searchEl = document.getElementById('skill-search');
+      const assignBtn = document.getElementById('assign-skill-btn');
+
+      function debounce(fn, wait){
+        let t;
+        return function(...args){ clearTimeout(t); t = setTimeout(()=> fn.apply(this,args), wait); };
+      }
+
       async function fetchSkills(){
         try{
           const res = await fetch('/api/v1/skills');
           const payload = await res.json();
           if(!payload.success) throw new Error(payload.error || 'Failed to fetch skills');
-          renderSkills(payload.data || []);
+          skillsData = payload.data || [];
+          renderSkills(skillsData);
         }catch(err){
           document.getElementById('skills-grid').innerHTML = '<div class="text-danger">Failed to load skills</div>';
           console.error(err);
         }
       }
 
-      function renderSkills(skills){
+      function renderSkills(skills, query){
         const grid = document.getElementById('skills-grid');
-        if(!skills.length){
-          grid.innerHTML = '<div class="text-muted-foreground">No skills available yet.</div>';
+        const q = (query || '').trim().toLowerCase();
+        const filtered = q ? skills.filter(s=> (s.skillName||s.name||'').toLowerCase().includes(q) || (s.description||'').toLowerCase().includes(q) || (s.category||'').toLowerCase().includes(q)) : skills;
+        if(!filtered.length){
+          grid.innerHTML = '<div class="text-muted-foreground">No skills found.</div>';
           return;
         }
-        grid.innerHTML = skills.map(s => (
-          `<div class="p-4 rounded-lg border border-border bg-card/20 cursor-pointer hover:shadow-glow" data-skill-id="${s._id}">
-            <div class="font-semibold text-foreground">${escapeHtml(s.skillName || s.name || 'Untitled')}</div>
-            <div class="text-xs text-muted-foreground mt-2">${escapeHtml(s.description || '')}</div>
-            <div class="text-xs text-muted-foreground mt-3">${s.category || ''}</div>
+        grid.innerHTML = filtered.map(s => (
+          `<div tabindex="0" role="button" class="skill-card p-6 rounded-xl border border-border bg-card/10 cursor-pointer hover:shadow-glow flex flex-col justify-between" data-skill-id="${s._id}">
+            <div>
+              <div class="font-semibold text-foreground mb-2 text-base">${escapeHtml(s.skillName || s.name || 'Untitled')}</div>
+              <div class="text-sm text-muted-foreground">${escapeHtml(s.description || '')}</div>
+            </div>
+            <div class="mt-6 text-sm text-muted-foreground">${s.category || ''}</div>
           </div>`
         )).join('');
 
         grid.querySelectorAll('[data-skill-id]').forEach(el=>{
-          el.addEventListener('click', ()=> openAssessments(el.getAttribute('data-skill-id'), el.querySelector('.font-semibold').textContent));
+          const id = el.getAttribute('data-skill-id');
+          const title = el.querySelector('.font-semibold').textContent;
+          el.addEventListener('click', ()=> openAssessments(id, title));
+          el.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAssessments(id, title); } });
         });
       }
 
       async function openAssessments(skillId, skillName){
+        currentSkillId = skillId;
         const dlg = document.getElementById('skill-assessments-dialog');
         const listEl = document.getElementById('skill-assessments-list');
         const noEl = document.getElementById('no-assessments');
@@ -69,6 +97,7 @@
         listEl.innerHTML = '<div class="text-muted-foreground">Loading…</div>';
         noEl.classList.add('hidden');
         dlg.classList.remove('hidden'); dlg.classList.add('flex');
+        if (window.lucide && lucide.createIcons) lucide.createIcons();
         try{
           const res = await fetch(`/api/v1/assessments/skill/${skillId}`);
           const payload = await res.json();
@@ -77,12 +106,16 @@
           if(!assessments.length){ listEl.innerHTML = ''; noEl.classList.remove('hidden'); return; }
           listEl.innerHTML = assessments.map(a => `
             <div class="p-3 rounded border border-border bg-white/5">
-              <div class="flex items-center justify-between">
-                <div class="text-sm text-foreground">Duration: ${a.duration} mins</div>
-                <div class="text-xs text-muted-foreground">Status: ${a.status}</div>
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <div class="text-sm text-foreground">Duration: ${a.duration} mins</div>
+                  <div class="text-xs text-muted-foreground">Total Marks: ${a.TotalMarks}</div>
+                  <div class="text-xs text-muted-foreground mt-1">Created: ${new Date(a.createdAt).toLocaleString()}</div>
+                </div>
+                <div class="flex-shrink-0">
+                  <a href="/assessments/${a._id}" class="inline-block px-4 py-2 rounded-md btn-primary">View</a>
+                </div>
               </div>
-              <div class="text-xs text-muted-foreground mt-2">Total Marks: ${a.TotalMarks}</div>
-              <div class="text-xs text-muted-foreground mt-1">Created: ${new Date(a.createdAt).toLocaleString()}</div>
             </div>
           `).join('');
         }catch(err){
@@ -91,7 +124,98 @@
         }
       }
 
+      async function assignSkillToLearner(){
+        if(!currentSkillId){
+          alert('No skill selected');
+          return;
+        }
+
+        const btn = assignBtn;
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 mr-2 animate-spin"></i>Assigning...';
+        lucide.createIcons();
+
+        try{
+          // Get current learner ID
+          const learnerRes = await fetch('/api/v1/learner/current', {
+            credentials: 'include'
+          });
+          if(!learnerRes.ok) {
+            const errorData = await learnerRes.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to get learner information. Please make sure you are logged in as a learner.');
+          }
+          const learnerData = await learnerRes.json();
+          // Handle both 'success' and 'status' response formats
+          const isSuccess = learnerData.success === true || learnerData.status === 'success';
+          if(!isSuccess || !learnerData.data){
+            throw new Error('Learner not found. Please make sure you are logged in as a learner.');
+          }
+          const learnerId = learnerData.data._id;
+
+          // Assign skill to learner
+          const assignRes = await fetch('/api/v1/learnerSkills/assign', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              learnerID: learnerId,
+              skillID: currentSkillId
+            })
+          });
+
+          const assignData = await assignRes.json();
+          if(!assignRes.ok || !assignData.success){
+            // Check if it's already assigned
+            if(assignRes.status === 400 && assignData.message && assignData.message.includes('already assigned')){
+              btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>Already Assigned';
+              btn.classList.remove('btn-primary');
+              btn.classList.add('bg-warning', 'text-white');
+              lucide.createIcons();
+              setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                btn.classList.remove('bg-warning', 'text-white');
+                btn.classList.add('btn-primary');
+                lucide.createIcons();
+              }, 2000);
+              return;
+            }
+            throw new Error(assignData.message || assignData.error || 'Failed to assign skill');
+          }
+
+          // Success message
+          btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 mr-2"></i>Assigned!';
+          btn.classList.remove('btn-primary');
+          btn.classList.add('bg-success', 'text-white');
+          lucide.createIcons();
+
+          // Reset button after 2 seconds
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            btn.classList.remove('bg-success', 'text-white');
+            btn.classList.add('btn-primary');
+            lucide.createIcons();
+          }, 2000);
+
+        }catch(err){
+          alert(err.message || 'Failed to assign skill. Please try again.');
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+          lucide.createIcons();
+        }
+      }
+
+      if(assignBtn){
+        assignBtn.addEventListener('click', assignSkillToLearner);
+      }
+
       function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+      searchEl && searchEl.addEventListener('input', debounce((e) => renderSkills(skillsData, e.target.value), 180));
 
       fetchSkills();
     })();

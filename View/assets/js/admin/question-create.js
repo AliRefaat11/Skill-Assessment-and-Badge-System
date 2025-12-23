@@ -5,7 +5,6 @@ function mapToBackendType(uiType) {
   return "mcq";
 }
 
-
 async function safeJson(res) {
   try {
     return await res.json();
@@ -206,6 +205,7 @@ const backendType = mapToBackendType(uiQuestionType);
   assessmentId,
   type: backendType,
   text: questionText,
+  options,
   points,
   correctAnswer
 })
