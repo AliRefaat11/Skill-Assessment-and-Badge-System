@@ -1,0 +1,19 @@
+.titleBlock h2 { margin: 0; }
+.titleBlock p { margin: 6px 0 0; }
+ .btn btn-primary{
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: none;
+  background: #7c3aed;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+.btn-danger {
+   background: rgba(231, 76, 60, 0.15);
+    color:#e74c3c;
+     border: 1px solid rgba(231,76,60,0.35);
+     }
+.btn-danger:hover{
+   background: rgba(231, 76, 60, 0.22);
+ }

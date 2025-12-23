@@ -1,9 +1,6 @@
 const Badge = require("../Models/badgeModel");
 
-// @desc    Get all badges
-// @route   GET /api/badges
-// @access  Public
-exports.getAllBadges = async (req, res) => {
+exports.getBadges = async (req, res) => {
   try {
     const badges = await Badge.find().populate("CourseID", "Name Description");
     res.status(200).json({
@@ -19,9 +16,6 @@ exports.getAllBadges = async (req, res) => {
   }
 };
 
-// @desc    Get a single badge by ID
-// @route   GET /api/badges/:id
-// @access  Public
 exports.getBadgeById = async (req, res) => {
   try {
     const badge = await Badge.findById(req.params.id).populate(
@@ -46,9 +40,6 @@ exports.getBadgeById = async (req, res) => {
   }
 };
 
-// @desc    Get badges by Course ID
-// @route   GET /api/badges/course/:courseId
-// @access  Public
 exports.getBadgesByCourse = async (req, res) => {
   try {
     const badges = await Badge.find({ CourseID: req.params.courseId }).populate(
@@ -68,9 +59,6 @@ exports.getBadgesByCourse = async (req, res) => {
   }
 };
 
-// @desc    Create a new badge
-// @route   POST /api/badges
-// @access  Private (Admin only)
 exports.createBadge = async (req, res) => {
   try {
     const { CourseID, Name, Requirements, Description, Icon } = req.body;
@@ -133,14 +121,14 @@ exports.updateBadge = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Badge updated successfully",
-      data: updatedBadge
+      data: badge
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// DELETE badge
+
 exports.deleteBadge = async (req, res) => {
   try {
     const badge = await Badge.findByIdAndDelete(req.params.id);

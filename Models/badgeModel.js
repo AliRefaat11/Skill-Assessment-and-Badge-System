@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const BadgeSchema = new mongoose.Schema({
-  CourseID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course',
-    required: true
-  },
   Name: {
     type: String,
     required: true,
@@ -27,5 +22,5 @@ const BadgeSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Badge = mongoose.model('Badge', BadgeSchema);
+const Badge = mongoose.models.Badge || mongoose.model('Badge', BadgeSchema);
 module.exports = Badge;

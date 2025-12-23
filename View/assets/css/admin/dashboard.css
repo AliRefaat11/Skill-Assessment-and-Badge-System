@@ -1,0 +1,185 @@
+/* ===============================
+   ADMIN DASHBOARD LAYOUT
+   =============================== */
+
+.admin-content {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #ffffff;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+
+.dashHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 25px;
+}
+
+.dashTitle {
+  font-size: 28px;
+  margin: 0;
+}
+
+.dashSub {
+  margin-top: 5px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.dashMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.metaLabel {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.metaValue {
+  font-size: 13px;
+}
+
+/* ===============================
+   KPI CARDS
+   =============================== */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.kpiCard {
+  background: #1c1f2b;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.kpiLabel {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.kpiValue {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* ===============================
+   CHARTS
+   =============================== */
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.panel {
+  background: #1c1f2b;
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.panelTitle {
+  font-size: 16px;
+  margin: 0;
+}
+
+.panelSub {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-top: 5px;
+}
+
+.chartWrap {
+  height: 250px;
+  margin-top: 10px;
+}
+
+/* ===============================
+   LATEST LISTS
+   =============================== */
+
+.listsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.listWrap {
+  margin-top: 10px;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #25283a;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.listTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.listMeta {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.listEmpty {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+/* ===============================
+   BUTTONS
+   =============================== */
+
+.btnGhost {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btnGhost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ===============================
+   RESPONSIVE
+   =============================== */
+
+@media (max-width: 900px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .listsGrid {
+    grid-template-columns: 1fr;
+  }
+}

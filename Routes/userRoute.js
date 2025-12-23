@@ -4,15 +4,23 @@ const {
     editUser, 
     deleteUser, 
     getUsersByRole, 
-    getUsersById} = require("../Controllers/userController");
-const { auth, allowedTo } = require('../Services/authService');
+    getUsersById,
+    getAllUsers} 
+    = require("../Controllers/userController");
 
+    
 const router = express.Router();
 
-router.post("/",allowedTo("Admin"), auth, createUser);
-router.put("/:id", editUser);
-router.delete("/:id", allowedTo("Admin"), auth, deleteUser);
+
+router.get("/", getAllUsers);
+router.post("/", createUser);
+
+// ✅ Put role BEFORE :id
+router.get("/role/:role", getUsersByRole);
+
 router.get("/:id", getUsersById);
-router.get("/role/:role", allowedTo("Admin"), auth, getUsersByRole);
+router.put("/:id", editUser);
+router.delete("/:id", deleteUser);
+
 
 module.exports = router;

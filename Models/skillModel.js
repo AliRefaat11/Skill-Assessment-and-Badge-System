@@ -8,14 +8,20 @@ const skillSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["Beginner", "Intermediate", "Expert"],
+      enum: ["Programming", "Design", "Marketing", "Business", "Data Science", "Other"],
       required: [true, "Category level is required"]
     },
-    learnerId: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Learner",
-      required: [true, "Learner ID is required"]
+    description: {
+      type: String,
+      trim: true
+    },
+    difficultyLevel: {
+      type: String,
+      enum: ["Beginner", "Intermediate", "Advanced"],
+      required: [true, "Difficulty level is required"]
     }
+  },
+  { timestamps: true
   }
 );
 

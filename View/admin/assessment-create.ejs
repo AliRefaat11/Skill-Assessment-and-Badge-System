@@ -1,0 +1,60 @@
+<%- include("./partials/header", { title: "Create Assessment", pageCss: "/assets/css/admin/assessment-create.css" }) %>
+<%- include("./partials/sidebar", { activeTab: activeTab }) %>
+
+
+<main class="admin-content">
+  <div id="alertBox" class="alert" style="display:none;"></div>
+  <div class="admin-page-head">
+    <div>
+      <h2 class="admin-title">Create Assessment</h2>
+      <p class="admin-subtitle">
+Skill: <span class="muted"><%= skill?.skillName || skill?.name || "Unknown" %></span>
+      </p>
+    </div>
+
+    <div class="admin-actions">
+      <a class="btn btn-secondary" href="/admin/skills/<%= skill?._id %>/assessments">Back</a>
+    </div>
+  </div>
+
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <section class="card">
+    <form id="createAssessmentForm" class="form-grid">
+<input type="hidden" id="skillId" value="<%= skill?._id %>" />
+
+      <div class="form-field">
+        <label for="durationMins">Duration (minutes)</label>
+        <input id="durationMins" type="number" min="1" placeholder="e.g. 30" required />
+      </div>
+
+      <div class="form-field">
+        <label for="status">Status</label>
+        <select id="status">
+          <option value="not-started">Not started</option>
+      </div>
+
+      <div class="form-field">
+        <label for="totalMarks">Total Marks</label>
+        <input id="totalMarks" type="number" min="0" placeholder="e.g. 100" required />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Create Assessment</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="questions-head">
+      <h3 class="section-title">Questions</h3>
+      <button type="button" class="btn btn-secondary" id="addQuestionBtn">+ Add Question</button>
+    </div>
+
+    <div id="questionsWrap"></div>
+  </section>
+</main>
+
+<script src="/assets/js/admin/assessment-create.js"></script>

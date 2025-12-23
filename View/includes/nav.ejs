@@ -11,12 +11,11 @@
     <div class="flex items-center gap-4 text-sm">
       <a class="hover:underline" href="/">Home</a>
       <% if (user) { %>
-      <a class="hover:underline" href="/profile">Profile</a>
-      <a class="hover:underline" href="/admin">Admin</a>
-      <a class="hover:underline" href="/logout">Logout</a>
+      <a class="hover:underline" href="/api/v1/learner/profile">Profile</a>
+      <a class="hover:underline" href="/api/v1/auth/logout">Logout</a>
       <% } else { %>
-      <a class="hover:underline" href="/auth?tab=login">Login</a>
-      <a class="hover:underline" href="/auth?tab=signup">Sign Up</a>
+      <a class="hover:underline" href="/api/v1/auth/?tab=login">Login</a>
+      <a class="hover:underline" href="/api/v1/auth/?tab=signup">Sign Up</a>
       <% } %>
     </div>
   </div>

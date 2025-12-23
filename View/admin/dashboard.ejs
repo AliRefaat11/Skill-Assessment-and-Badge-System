@@ -1,0 +1,81 @@
+<%- include("partials/header", {
+  title: "Admin Dashboard",
+  pageCss: "/assets/css/admin/dashboard.css"
+}) %>
+
+<%- include("partials/sidebar", { activeTab: "dashboard" }) %>
+
+<main class="admin-content">
+
+  <!-- HEADER -->
+  <div class="dashHead">
+    <div>
+      <h2 class="dashTitle">Dashboard</h2>
+      <p class="dashSub">
+        Overview of users, skills, assessments, and questions
+      </p>
+    </div>
+
+    <div class="dashMeta">
+      <span class="metaLabel">Last updated:</span>
+      <span id="lastUpdated" class="metaValue">Loading…</span>
+      <button id="refreshBtn" class="btnGhost" type="button">Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <section class="kpiGrid">
+    <div class="kpiCard">
+      <div class="kpiLabel">Total Users</div>
+      <div id="kpiUsers" class="kpiValue">—</div>
+    </div>
+
+    <div class="kpiCard">
+      <div class="kpiLabel">Total Skills</div>
+      <div id="kpiSkills" class="kpiValue">—</div>
+    </div>
+
+    <div class="kpiCard">
+      <div class="kpiLabel">Total Assessments</div>
+      <div id="kpiAssessments" class="kpiValue">—</div>
+    </div>
+
+    <div class="kpiCard">
+      <div class="kpiLabel">Total Questions</div>
+      <div id="kpiQuestions" class="kpiValue">—</div>
+    </div>
+  </section>
+
+  <!-- CHARTS -->
+  <section class="chartsGrid">
+    <div class="panel">
+      <div class="panelHead">
+        <h3 class="panelTitle">Assessments by status</h3>
+        <p class="panelSub">Distribution of assessment progress</p>
+      </div>
+      <div class="chartWrap">
+        <canvas id="chartAssessmentsStatus"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h3 class="panelTitle">Questions by type</h3>
+        <p class="panelSub">MCQ, True / False, Short</p>
+      </div>
+      <div class="chartWrap">
+        <canvas id="chartQuestionsType"></canvas>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- CHART LIB -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- DASHBOARD LOGIC -->
+<%- include("partials/footer", {
+  pageJs: "/assets/js/admin/dashboard.js"
+}) %>
+

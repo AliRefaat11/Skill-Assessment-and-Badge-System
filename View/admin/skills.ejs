@@ -1,0 +1,32 @@
+<%- include("partials/header", {
+  title: "Create Skill",
+  pageCss: "/assets/css/admin/form-create.css"
+}) %><%- include("partials/sidebar", { activeTab }) %>
+
+<div class="pageHead">
+  <div class="titleBlock">
+    <h2>Skills</h2>
+    <p class="muted">Manage skills</p>
+  </div>
+  <a class="btnPrimary" href="/admin/skills/new">+ Add Skill</a>
+
+</div>
+
+<div id="alertBox" class="alert" style="display:none;"></div>
+
+<div class="tableCard">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Skill Name</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="skillsTableBody">
+      <tr><td colspan="3">Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<%- include("partials/footer", { pageJs: "/assets/js/admin/skills.js" }) %>
